@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN
-const REPO_OWNER = 'mooburg'
+const REPO_OWNER = 'mooooburg-dev'
 const REPO_NAME = 'miniplay'
 
 export async function POST(req: NextRequest) {
@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
           body: JSON.stringify({
             title: `[의견함] ${type}`,
             body: `## ${type}\n\n${message}\n\n---\n_우리 가족 의견함에서 전달된 메시지입니다._`,
-            labels: ['feedback'],
           }),
         },
       )
