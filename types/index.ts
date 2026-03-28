@@ -1,4 +1,4 @@
-export type GameType = 'roulette' | 'croc' | 'bomb' | 'balloon'
+export type GameType = 'roulette' | 'croc' | 'bomb' | 'balloon' | 'mole'
 
 export interface GameMeta {
   id: GameType
@@ -28,6 +28,15 @@ export const GAMES: GameMeta[] = [
     color: '#27ae60',
     shadow: '#a8e6cf',
     path: '/game/croc',
+  },
+  {
+    id: 'mole',
+    emoji: '🐹',
+    name: '쏙쏙 햄찌',
+    desc: '쏙쏙 올라오는 햄찌를 잡아라!',
+    color: '#e74c3c',
+    shadow: '#f5a5a5',
+    path: '/game/mole',
   },
   {
     id: 'bomb',
