@@ -228,4 +228,25 @@ export function useBgm() {
       stopPlayback()
     }
   }, [playing, startPlayback, stopPlayback])
+
+  // 브라우저 정책: 사용자 인터랙션 전에는 AudioContext가 suspended 상태.
+  // 첫 클릭/터치 시 resume 후 재생을 시작한다.
+  useEffect(() => {
+    const unlock = () => {
+      const ctx = getAC()
+      if (ctx.state === 'suspended') {
+        ctx.resume().then(() => {
+          if (useBgmStore.getState().playing && !sourceRef.current) {
+            startPlayback()
+          }
+        })
+      }
+    }
+    document.addEventListener('click', unlock, { once: true })
+    document.addEventListener('touchstart', unlock, { once: true })
+    return () => {
+      document.removeEventListener('click', unlock)
+      document.removeEventListener('touchstart', unlock)
+    }
+  }, [getAC, startPlayback])
 }
