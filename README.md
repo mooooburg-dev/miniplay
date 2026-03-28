@@ -34,13 +34,13 @@
 
 ```bash
 # 의존성 설치
-yarn install
+npm install
 
 # 로컬 개발 서버
-yarn dev
+npm run dev
 
 # 프로덕션 빌드
-yarn build
+npm run build
 ```
 
 http://localhost:3000 에서 확인할 수 있습니다.
@@ -52,9 +52,13 @@ http://localhost:3000 에서 확인할 수 있습니다.
 ```
 miniplay/
 ├── app/
-│   ├── layout.tsx          # 루트 레이아웃 (Jua 폰트, 메타데이터)
+│   ├── layout.tsx          # 루트 레이아웃 (Jua 폰트, 메타데이터, 애널리틱스)
 │   ├── globals.css         # Tailwind base + 공통 스타일
+│   ├── manifest.ts         # PWA 매니페스트 설정
 │   ├── page.tsx            # 홈 허브 (게임 카드 목록)
+│   ├── icon.png            # 파비콘 (32x32)
+│   ├── apple-icon.png      # Apple Touch Icon (180x180)
+│   ├── api/feedback/       # 피드백 API 라우트
 │   └── game/
 │       ├── roulette/page.tsx
 │       ├── croc/page.tsx
@@ -65,11 +69,17 @@ miniplay/
 │   ├── PlayerSetup.tsx     # 플레이어 이름 설정
 │   ├── TurnBadge.tsx       # 현재 차례 표시
 │   ├── ScoreBar.tsx        # 플레이어별 점수
-│   └── PenaltyOverlay.tsx  # 벌칙 오버레이
+│   ├── PenaltyOverlay.tsx  # 벌칙 오버레이
+│   ├── BgmToggle.tsx       # BGM 토글 버튼
+│   ├── FeedbackButton.tsx  # 피드백 제출 버튼
+│   └── InstallPrompt.tsx   # iOS PWA 설치 안내
 ├── store/
 │   └── gameStore.ts        # Zustand 전역 상태
 ├── hooks/
-│   └── useAudio.ts         # Web Audio API 사운드 엔진
+│   ├── useAudio.ts         # Web Audio API 효과음 엔진
+│   └── useBgm.ts           # Web Audio API BGM 엔진
+├── lib/
+│   └── gtag.ts             # Google Analytics 연동
 └── types/
     └── index.ts            # 타입 정의 + GAMES 메타 배열
 ```
