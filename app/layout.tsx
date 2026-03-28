@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
 import { Jua } from 'next/font/google'
 import './globals.css'
+
+const GA_ID = 'G-EK2E2ZR7PW'
 
 const jua = Jua({
   subsets: ['latin'],
@@ -37,6 +40,20 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ko" className={jua.variable}>
+      <head>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="gtag-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_ID}');
+          `}
+        </Script>
+      </head>
       <body className="font-jua">{children}</body>
     </html>
   )
