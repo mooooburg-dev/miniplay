@@ -26,7 +26,7 @@ export default function RoulettePage() {
   const [numColor, setNumColor] = useState(COLORS[0])
   const [progress, setProgress] = useState(0)
   const [msg, setMsg] = useState('버튼을 눌러봐! 🌟')
-  const [forbiddenNum] = useState(() => Math.floor(Math.random() * 8))
+  const [forbiddenNum, setForbiddenNum] = useState(() => Math.floor(Math.random() * 8))
   const [penaltyPlayer, setPenaltyPlayer] = useState('')
   const [landedAnim, setLandedAnim] = useState(false)
 
@@ -93,6 +93,7 @@ export default function RoulettePage() {
 
   const reset = useCallback(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    setForbiddenNum(Math.floor(Math.random() * 8))
     setPhase('idle')
     setDisplayNum(null)
     setProgress(0)

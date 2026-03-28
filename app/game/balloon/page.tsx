@@ -16,7 +16,7 @@ export default function BalloonPage() {
   const { players, scores, turn, nextTurn, addPenalty } = useGameStore()
   const { playPump, playPop } = useAudio()
 
-  const [popAt] = useState(() => POP_MIN + Math.floor(Math.random() * (POP_MAX - POP_MIN + 1)))
+  const [popAt, setPopAt] = useState(() => POP_MIN + Math.floor(Math.random() * (POP_MAX - POP_MIN + 1)))
   const [pumps, setPumps] = useState(0)
   const [popped, setPopped] = useState(false)
   const [penaltyPlayer, setPenaltyPlayer] = useState('')
@@ -61,6 +61,7 @@ export default function BalloonPage() {
   }, [popped, pumps, popAt, turn, players, playPump, playPop, nextTurn, addPenalty])
 
   const reset = useCallback(() => {
+    setPopAt(POP_MIN + Math.floor(Math.random() * (POP_MAX - POP_MIN + 1)))
     setPumps(0)
     setPopped(false)
     setPenaltyPlayer('')

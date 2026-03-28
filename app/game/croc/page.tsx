@@ -21,7 +21,7 @@ export default function CrocPage() {
   const { players, scores, turn, nextTurn, addPenalty } = useGameStore()
   const { playSafe, playDanger } = useAudio()
 
-  const [trapIndex] = useState(() => Math.floor(Math.random() * TOOTH_COUNT))
+  const [trapIndex, setTrapIndex] = useState(() => Math.floor(Math.random() * TOOTH_COUNT))
   const [teeth, setTeeth] = useState<ToothState[]>(() => initTeeth(trapIndex))
   const [hint, setHint] = useState('조심조심... 이빨을 뽑아보세요! 🦷')
   const [penaltyPlayer, setPenaltyPlayer] = useState('')
@@ -64,6 +64,7 @@ export default function CrocPage() {
   )
 
   const reset = useCallback(() => {
+    setTrapIndex(Math.floor(Math.random() * TOOTH_COUNT))
     setTeeth(Array(TOOTH_COUNT).fill('idle') as ToothState[])
     setHint('조심조심... 이빨을 뽑아보세요! 🦷')
     setPenaltyPlayer('')
