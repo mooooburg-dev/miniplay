@@ -29,22 +29,22 @@ export function PlayerSetup() {
   }
 
   return (
-    <div className="bg-white/80 rounded-2xl p-4 w-full max-w-sm mb-5">
-      <h3 className="text-xs text-gray-400 text-center mb-3 font-jua">
-        👨‍👩‍👦 누가 플레이하나요? (2~6명)
+    <div className="glass-card w-full max-w-sm mb-6 p-5">
+      <h3 className="text-[13px] text-gray-500 text-center mb-4 font-jua flex justify-center items-center gap-1.5 opacity-80">
+        <span>👨‍👩‍👦</span> 누가 플레이하나요? (2~6명)
       </h3>
 
       {/* 선택된 플레이어 */}
       {players.length > 0 && (
-        <div className="flex flex-wrap gap-2 justify-center mb-3">
+        <div className="flex flex-wrap gap-2.5 justify-center mb-4">
           {players.map((name, i) => (
             <button
               key={i}
               onClick={() => removePlayer(i)}
-              className="flex items-center gap-1 bg-[#ffd6e0] rounded-full px-3 py-1.5 font-jua text-sm text-gray-600 active:scale-95 transition-transform"
+              className="flex items-center gap-1.5 bg-gradient-to-r from-[#FFB3CC] to-[#FF9EBC] text-white shadow-[0_4px_12px_rgba(255,179,204,0.4)] rounded-full px-4 py-1.5 font-jua text-sm active:scale-95 transition-all hover:-translate-y-0.5 group"
             >
               {name}
-              <span className="text-[#ffaabb] text-xs">✕</span>
+              <span className="bg-white/30 rounded-full w-4 h-4 flex items-center justify-center text-[10px] ml-0.5 group-hover:bg-white/50 transition-colors">✕</span>
             </button>
           ))}
         </div>
@@ -52,12 +52,12 @@ export function PlayerSetup() {
 
       {/* 프리셋 버튼 */}
       {players.length < 6 && (
-        <div className="flex flex-wrap gap-2 justify-center mb-3">
+        <div className="flex flex-wrap gap-2 justify-center mb-2">
           {PRESETS.filter((p) => !players.includes(p.name)).map((preset) => (
             <button
               key={preset.name}
               onClick={() => addPlayerByName(preset.name)}
-              className="border-2 border-dashed border-[#ffb3cc] rounded-full px-3 py-1.5 font-jua text-xs text-[#cc7a94] active:scale-95 active:bg-[#fff0f5] transition-all"
+              className="bg-white/50 backdrop-blur-sm border border-white/80 rounded-full px-3.5 py-1.5 font-jua text-xs text-[#8c8d91] active:scale-95 hover:bg-white hover:text-[#555] transition-all hover:shadow-[0_2px_8px_rgba(0,0,0,0.05)]"
             >
               {preset.label}
             </button>
@@ -67,12 +67,12 @@ export function PlayerSetup() {
           {!showInput ? (
             <button
               onClick={() => setShowInput(true)}
-              className="border-2 border-dashed border-[#c8b4ff] rounded-full px-3 py-1.5 font-jua text-xs text-[#9b85d6] active:scale-95 active:bg-[#f5f0ff] transition-all"
+              className="bg-[#E6D5FF]/40 border border-[#E6D5FF] rounded-full px-3.5 py-1.5 font-jua text-xs text-[#9b85d6] active:scale-95 hover:bg-[#E6D5FF]/70 transition-all hover:shadow-[0_2px_8px_rgba(155,133,214,0.2)] flex items-center gap-1"
             >
-              ✏️ 직접 입력
+              <span>✏️</span> 직접 입력
             </button>
           ) : (
-            <div className="flex items-center gap-1.5 w-full justify-center mt-1">
+            <div className="flex items-center gap-1.5 w-full justify-center mt-2 p-1 bg-white/50 rounded-full shadow-inner">
               <input
                 type="text"
                 value={customName}
@@ -81,20 +81,21 @@ export function PlayerSetup() {
                 placeholder="이름 입력"
                 maxLength={5}
                 autoFocus
-                className="border-2 border-[#c8b4ff] rounded-full px-3 py-1.5 font-jua text-sm text-gray-600 w-24 text-center outline-none focus:border-[#9b85d6]"
+                className="bg-transparent px-3 py-1 font-jua text-sm text-gray-700 w-24 text-center outline-none placeholder:text-gray-400"
               />
               <button
                 onClick={handleAddCustom}
-                className="bg-[#c8b4ff] text-white rounded-full px-3 py-1.5 font-jua text-xs active:scale-95 transition-transform"
+                className="bg-gradient-to-r from-[#c8b4ff] to-[#b399ff] text-white rounded-full px-4 py-1.5 font-jua text-xs shadow-[0_2px_8px_rgba(200,180,255,0.4)] active:scale-95 transition-all"
               >
-                추가
+                +
               </button>
               <button
                 onClick={() => {
                   setShowInput(false)
                   setCustomName('')
                 }}
-                className="text-gray-300 text-sm"
+                className="text-gray-400 px-2 py-1 text-xs hover:text-gray-600 transition-colors"
+                title="취소"
               >
                 ✕
               </button>
@@ -107,7 +108,7 @@ export function PlayerSetup() {
       {players.length > 0 && (
         <button
           onClick={resetScores}
-          className="block mx-auto mt-1 text-xs text-gray-300 font-jua hover:text-gray-400 transition-colors"
+          className="block mx-auto mt-4 text-[11px] text-gray-400 font-jua hover:text-[#ff8fab] transition-colors"
         >
           🔄 점수 초기화
         </button>

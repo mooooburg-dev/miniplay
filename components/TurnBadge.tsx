@@ -11,10 +11,14 @@ export function TurnBadge({
 }: TurnBadgeProps) {
   return (
     <div
-      className="px-7 py-2.5 rounded-full text-xl text-center font-jua bg-white mb-2.5 transition-all duration-300"
-      style={{ boxShadow: `0 4px 0 ${shadowColor}`, color }}
+      className="px-8 py-3 rounded-full text-2xl text-center font-jua bg-white/90 backdrop-blur-md mb-5 transition-all duration-300 border border-white/80 animate-pulse-glow"
+      style={{
+        color,
+        boxShadow: `0 8px 24px ${shadowColor}60, inset 0 2px 4px rgba(255,255,255,1)`,
+      }}
     >
-      🌟 {playerName} 차례!
+      <span className="inline-block animate-wiggle mr-1.5 origin-bottom">🌟</span>
+      {playerName} 차례!
     </div>
   )
 }

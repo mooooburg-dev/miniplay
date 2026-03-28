@@ -11,10 +11,24 @@ const config: Config = {
       fontFamily: {
         jua: ['var(--font-jua)', 'sans-serif'],
       },
+      colors: {
+        pastel: {
+          pink: '#FFD6E0',
+          rose: '#FFB3CC',
+          magenta: '#FF6B9D',
+          purple: '#E6D5FF',
+          blue: '#D6E5FF',
+          yellow: '#FFF5D6',
+        }
+      },
       keyframes: {
         floatY: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-6px)' },
+        },
+        pulseGlow: {
+          '0%, 100%': { transform: 'scale(1)', filter: 'drop-shadow(0 0 8px rgba(255,107,157,0.4))' },
+          '50%': { transform: 'scale(1.02)', filter: 'drop-shadow(0 0 16px rgba(255,107,157,0.7))' },
         },
         spinBounce: {
           '0%, 100%': { transform: 'scale(1)' },
@@ -81,6 +95,7 @@ const config: Config = {
       },
       animation: {
         'float-y': 'floatY 2.5s ease-in-out infinite',
+        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'spin-bounce': 'spinBounce 0.14s ease-in-out infinite',
         'land-pop': 'landPop 0.5s cubic-bezier(0.34,1.56,0.64,1)',
         'bomb-idle': 'bombIdle 1.2s ease-in-out infinite',

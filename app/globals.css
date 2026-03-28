@@ -12,9 +12,17 @@
 
 body {
   min-height: 100vh;
-  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ffd6e0 100%);
+  background: radial-gradient(circle at 15% 50%, #FFF5D6, transparent 50%),
+              radial-gradient(circle at 85% 30%, #D6E5FF, transparent 50%),
+              radial-gradient(circle at 50% 80%, #FFD6E0, transparent 50%);
+  background-color: #fdfbfb;
   background-attachment: fixed;
   overflow-x: hidden;
+}
+
+/* Glassmorphism utility */
+.glass-card {
+  @apply bg-white/60 backdrop-blur-md border border-white/60 shadow-[0_8px_32px_rgba(255,182,193,0.15)] rounded-3xl;
 }
 
 /* 게임 공통 레이아웃 */
@@ -23,15 +31,18 @@ body {
 }
 
 /* 액션 버튼 공통 글로시 효과 */
+.action-btn {
+  @apply relative overflow-hidden transition-all duration-200 active:scale-95;
+}
 .action-btn::before {
   content: '';
   position: absolute;
-  top: 7px;
-  left: 14px;
-  width: 52%;
-  height: 26%;
-  background: rgba(255, 255, 255, 0.28);
-  border-radius: 20px;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 45%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 100%);
+  border-radius: inherit;
   pointer-events: none;
 }
 

@@ -23,14 +23,30 @@ export function GameCard({ game }: GameCardProps) {
     <button
       onClick={handleClick}
       disabled={disabled}
-      className={`bg-white rounded-3xl p-5 text-center transition-all duration-150 font-jua w-full ${disabled ? 'opacity-40 saturate-0' : 'active:translate-y-1 hover:-translate-y-0.5'}`}
-      style={{ boxShadow: `0 6px 0 ${game.shadow}` }}
+      className={`glass-card p-5 text-center transition-all duration-300 font-jua w-full group overflow-hidden relative ${
+        disabled
+          ? 'opacity-50 saturate-0'
+          : 'hover:-translate-y-1 hover:shadow-xl active:scale-95'
+      }`}
+      style={{
+        boxShadow: disabled
+          ? 'none'
+          : `0 8px 20px ${game.color}30, inset 0 2px 4px rgba(255,255,255,0.7)`,
+        borderBottom: `4px solid ${game.color}20`,
+      }}
     >
-      <span className="text-5xl block mb-2">{game.emoji}</span>
-      <span className="block text-base mb-1" style={{ color: game.color }}>
+      {/* Decorative gradient blob inside card */}
+      <div
+        className="absolute -inset-6 opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-2xl rounded-full z-0"
+        style={{ background: `radial-gradient(circle, ${game.color}, transparent 70%)` }}
+      />
+      <span className="text-6xl block mb-3 relative z-10 group-hover:scale-110 transition-transform duration-300 group-hover:drop-shadow-sm">
+        {game.emoji}
+      </span>
+      <span className="block text-lg mb-0.5 relative z-10 font-bold" style={{ color: game.color }}>
         {game.name}
       </span>
-      <span className="block text-xs text-gray-400">{game.desc}</span>
+      <span className="block text-[11px] text-gray-400 relative z-10">{game.desc}</span>
     </button>
   )
 }
