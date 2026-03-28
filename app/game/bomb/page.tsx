@@ -6,6 +6,7 @@ import { useAudio } from '@/hooks/useAudio'
 import { TurnBadge } from '@/components/TurnBadge'
 import { ScoreBar } from '@/components/ScoreBar'
 import { PenaltyOverlay } from '@/components/PenaltyOverlay'
+import { trackEvent } from '@/lib/gtag'
 
 const BOMB_MIN = 9000
 const BOMB_MAX = 25000
@@ -41,6 +42,7 @@ export default function BombPage() {
 
   const startBomb = useCallback(() => {
     if (phase !== 'idle') return
+    trackEvent('game_start', { game_name: 'bomb' })
     playClick()
 
     const total = BOMB_MIN + Math.random() * (BOMB_MAX - BOMB_MIN)

@@ -1,9 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
 import { Jua } from 'next/font/google'
+import { GA_ID } from '@/lib/gtag'
 import './globals.css'
-
-const GA_ID = 'G-EK2E2ZR7PW'
 
 const jua = Jua({
   subsets: ['latin'],

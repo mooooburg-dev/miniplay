@@ -6,6 +6,7 @@ import { useAudio } from '@/hooks/useAudio'
 import { TurnBadge } from '@/components/TurnBadge'
 import { ScoreBar } from '@/components/ScoreBar'
 import { PenaltyOverlay } from '@/components/PenaltyOverlay'
+import { trackEvent } from '@/lib/gtag'
 
 const SPIN_DURATION = 3000
 const COLORS = [
@@ -33,6 +34,7 @@ export default function RoulettePage() {
 
   const spin = useCallback(() => {
     if (phase !== 'idle') return
+    trackEvent('game_start', { game_name: 'roulette' })
     setPhase('spinning')
     setLandedAnim(false)
     setProgress(0)

@@ -1,11 +1,12 @@
 'use client'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useGameStore } from '@/store/gameStore'
 import { useAudio } from '@/hooks/useAudio'
 import { TurnBadge } from '@/components/TurnBadge'
 import { ScoreBar } from '@/components/ScoreBar'
 import { PenaltyOverlay } from '@/components/PenaltyOverlay'
+import { trackEvent } from '@/lib/gtag'
 
 const POP_MIN = 8
 const POP_MAX = 21
@@ -34,8 +35,14 @@ export default function BalloonPage() {
   else if (isWarning) msgText = '😬 조심조심... 점점 커지고 있어요!'
   else if (pumps > 0) msgText = '💨 더 부풀려봐요!'
 
+  const trackedRef = useRef(false)
+
   const pump = useCallback(() => {
     if (popped) return
+    if (!trackedRef.current) {
+      trackEvent('game_start', { game_name: 'balloon' })
+      trackedRef.current = true
+    }
     const next = pumps + 1
     setPumps(next)
     playPump()

@@ -1,11 +1,12 @@
 'use client'
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useGameStore } from '@/store/gameStore'
 import { useAudio } from '@/hooks/useAudio'
 import { TurnBadge } from '@/components/TurnBadge'
 import { ScoreBar } from '@/components/ScoreBar'
 import { PenaltyOverlay } from '@/components/PenaltyOverlay'
+import { trackEvent } from '@/lib/gtag'
 
 const TOOTH_COUNT = 12
 
@@ -25,10 +26,15 @@ export default function CrocPage() {
   const [hint, setHint] = useState('조심조심... 이빨을 뽑아보세요! 🦷')
   const [penaltyPlayer, setPenaltyPlayer] = useState('')
   const [locked, setLocked] = useState(false)
+  const trackedRef = useRef(false)
 
   const pullTooth = useCallback(
     (i: number) => {
       if (locked || teeth[i] !== 'idle') return
+      if (!trackedRef.current) {
+        trackEvent('game_start', { game_name: 'croc' })
+        trackedRef.current = true
+      }
 
       if (i === trapIndex) {
         // 위험!
