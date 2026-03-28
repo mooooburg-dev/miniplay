@@ -14,6 +14,9 @@ interface GameState {
   updatePlayerName: (index: number, name: string) => void
   resetScores: () => void
 
+  // Player order
+  swapPlayers: (i: number, j: number) => void
+
   // Turn management
   nextTurn: () => void
   resetTurn: () => void
@@ -69,6 +72,16 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   resetScores: () =>
     set((s) => ({ scores: s.players.map(() => 0) })),
+
+  swapPlayers: (i, j) =>
+    set((s) => {
+      if (i < 0 || j < 0 || i >= s.players.length || j >= s.players.length) return s
+      const players = [...s.players]
+      const scores = [...s.scores]
+      ;[players[i], players[j]] = [players[j], players[i]]
+      ;[scores[i], scores[j]] = [scores[j], scores[i]]
+      return { players, scores }
+    }),
 
   nextTurn: () =>
     set((s) => ({ turn: (s.turn + 1) % s.players.length })),
