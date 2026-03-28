@@ -39,9 +39,9 @@ export function useBgm() {
   const buildBuffer = useCallback(() => {
     if (bufferRef.current) return bufferRef.current
     const ctx = getAC()
-    const bpm = 140
+    const bpm = 160
     const beatSec = 60 / bpm
-    const bars = 4
+    const bars = 8
     const totalBeats = bars * 4
     const duration = totalBeats * beatSec
     const sr = ctx.sampleRate
@@ -50,73 +50,136 @@ export function useBgm() {
     const L = buffer.getChannelData(0)
     const R = buffer.getChannelData(1)
 
-    // 멜로디 패턴 (음계: C D E F G A B)
-    const scale = [261.6, 293.7, 329.6, 349.2, 392.0, 440.0, 493.9, 523.3]
-    // 경쾌한 멜로디 시퀀스 (scale index, -1 = rest)
-    const melody = [
-      0, 2, 4, 5, 4, 2, 3, 4,
-      5, 7, 5, 4, 2, 0, 2, -1,
+    // C 메이저 스케일 주파수
+    const C4 = 261.6, D4 = 293.7, E4 = 329.6, F4 = 349.2
+    const G4 = 392.0, A4 = 440.0, B4 = 493.9, C5 = 523.3
+    const D5 = 587.3, E5 = 659.3, G5 = 784.0
+
+    // 8마디 멜로디 (8분음표 단위, 총 64스텝)
+    const mel: (number | -1)[] = [
+      C5, E5, G5, E5, D5, C5, D5, E5,
+      G4, A4, B4, C5, D5, E5, D5, C5,
+      E5, -1, G5, E5, D5, -1, C5, D5,
+      E5, D5, C5, B4, A4, G4, A4, -1,
+      C5, D5, E5, G5, E5, D5, C5, E5,
+      G4, -1, B4, -1, D5, -1, G5, -1,
+      E5, G5, E5, D5, C5, D5, E5, G5,
+      D5, C5, B4, A4, G4, -1, -1, -1,
     ]
-    // 베이스 패턴
-    const bass = [0, 0, 5, 5, 3, 3, 4, 4]
+
+    // 베이스 (비트 단위, 32스텝)
+    const bassNotes = [
+      C4/2, C4/2, C4/2, G4/2,
+      A4/2, A4/2, A4/2, E4/2,
+      F4/2, F4/2, F4/2, C4/2,
+      G4/2, G4/2, G4/2, G4/2,
+      C4/2, C4/2, C4/2, G4/2,
+      A4/2, A4/2, A4/2, E4/2,
+      F4/2, F4/2, G4/2, G4/2,
+      C4/2, C4/2, G4/2, C4/2,
+    ]
+
+    // 코드 (2비트마다) - 아르페지오용
+    const chords: number[][] = [
+      [C4, E4, G4], [C4, E4, G4], [A4/2*2, C4, E4], [A4/2*2, C4, E4],
+      [F4, A4, C5], [F4, A4, C5], [G4, B4, D5], [G4, B4, D5],
+      [C4, E4, G4], [C4, E4, G4], [A4/2*2, C4, E4], [A4/2*2, C4, E4],
+      [F4, A4, C5], [G4, B4, D5], [C4, E4, G4], [C4, E4, G4],
+    ]
 
     for (let i = 0; i < len; i++) {
       const t = i / sr
       const beat = t / beatSec
+      const eighthBeat = beat * 2
 
-      // 멜로디 (삼각파, 부드러운 어택)
-      const melIdx = Math.floor(beat) % melody.length
-      const note = melody[melIdx]
-      if (note >= 0) {
-        const freq = scale[note]
-        const beatPos = (beat % 1)
-        // 부드러운 엔벨로프
-        const env = Math.min(1, beatPos * 12) * Math.max(0, 1 - beatPos * 1.3)
-        // 삼각파
+      // === 메인 멜로디 (사각파+삼각파 믹스) ===
+      const melStep = Math.floor(eighthBeat) % mel.length
+      const freq = mel[melStep]
+      if (freq > 0) {
+        const pos = eighthBeat % 1
+        const env = Math.min(1, pos * 20) * Math.max(0, 1 - pos * 0.9)
         const phase = (t * freq) % 1
         const tri = 4 * Math.abs(phase - 0.5) - 1
-        L[i] += tri * env * 0.12
-        R[i] += tri * env * 0.12
+        const sq = phase < 0.5 ? 1 : -1
+        const mix = tri * 0.7 + sq * 0.3
+        L[i] += mix * env * 0.10
+        R[i] += mix * env * 0.10
       }
 
-      // 고음 하모니 (한 옥타브 위, 작은 볼륨)
-      const harmIdx = Math.floor(beat / 2) % melody.length
-      const harmNote = melody[harmIdx]
-      if (harmNote >= 0) {
-        const freq = scale[harmNote] * 2
-        const beatPos = ((beat / 2) % 1)
-        const env = Math.min(1, beatPos * 8) * Math.max(0, 1 - beatPos * 0.8)
-        const phase = (t * freq) % 1
-        const sine = Math.sin(phase * Math.PI * 2)
-        L[i] += sine * env * 0.04
-        R[i] += sine * env * 0.04
+      // === 아르페지오 (16분음표, 스테레오 핑퐁) ===
+      const chordIdx = Math.floor(beat / 2) % chords.length
+      const chord = chords[chordIdx]
+      const arpStep = Math.floor(beat * 4) % 4
+      const arpNote = chord[arpStep % chord.length]
+      const arpFreq = arpNote * 2
+      const arpPos = (beat * 4) % 1
+      const arpEnv = Math.min(1, arpPos * 30) * Math.max(0, 1 - arpPos * 1.5)
+      const arpSine = Math.sin((t * arpFreq) % 1 * Math.PI * 2)
+      const arpVol = arpEnv * 0.045
+      if (arpStep % 2 === 0) {
+        L[i] += arpSine * arpVol * 1.3
+        R[i] += arpSine * arpVol * 0.5
+      } else {
+        L[i] += arpSine * arpVol * 0.5
+        R[i] += arpSine * arpVol * 1.3
       }
 
-      // 베이스 (사인파, 낮은 옥타브)
-      const bassIdx = Math.floor(beat / 2) % bass.length
-      const bassNote = bass[bassIdx]
-      const bassFreq = scale[bassNote] / 2
-      const bassEnv = Math.min(1, ((beat / 2) % 1) * 10) * Math.max(0, 1 - ((beat / 2) % 1) * 0.6)
-      const bassSine = Math.sin((t * bassFreq) % 1 * Math.PI * 2)
-      L[i] += bassSine * bassEnv * 0.10
-      R[i] += bassSine * bassEnv * 0.10
+      // === 펑키 베이스 (옥타브 점프) ===
+      const bassIdx = Math.floor(beat) % bassNotes.length
+      const bassFreq = bassNotes[bassIdx]
+      const bassPos = beat % 1
+      const isGhost = bassPos >= 0.5
+      const bFreq = isGhost ? bassFreq * 2 : bassFreq
+      const bVol = isGhost ? 0.06 : 0.11
+      const bPos = isGhost ? (bassPos - 0.5) * 2 : bassPos * 2
+      const bassEnv = Math.min(1, bPos * 18) * Math.max(0, 1 - bPos * 0.7)
+      const bassSig = Math.sin((t * bFreq) % 1 * Math.PI * 2)
+      L[i] += bassSig * bassEnv * bVol
+      R[i] += bassSig * bassEnv * bVol
 
-      // 간단한 퍼커션 (킥 + 하이햇 느낌)
+      // === 드럼 패턴 ===
+      const beatInBar = beat % 4
       const subBeat = beat % 1
-      if (subBeat < 0.05) {
-        // 킥 (저주파 버스트)
-        const kickEnv = 1 - subBeat / 0.05
-        const kickFreq = 80 * (1 + kickEnv * 2)
-        const kick = Math.sin(t * kickFreq * Math.PI * 2) * kickEnv * 0.12
+      const sixteenth = (beat * 4) % 1
+
+      // 킥
+      const isKick = subBeat < 0.06 && (
+        Math.floor(beatInBar) === 0 ||
+        Math.floor(beatInBar) === 2 ||
+        (Math.floor(beatInBar) === 3 && beat * 4 % 4 >= 3.5)
+      )
+      if (isKick) {
+        const kPos = subBeat / 0.06
+        const kEnv = (1 - kPos) * (1 - kPos)
+        const kick = Math.sin(t * 55 * (1 + kEnv * 3) * Math.PI * 2) * kEnv * 0.18
         L[i] += kick
         R[i] += kick
       }
-      if (Math.floor(beat * 2) % 2 === 1 && (beat * 2 % 1) < 0.03) {
-        // 하이햇 (노이즈)
-        const hhEnv = 1 - (beat * 2 % 1) / 0.03
-        const hh = (Math.random() * 2 - 1) * hhEnv * 0.06
-        L[i] += hh
-        R[i] += hh
+
+      // 스네어
+      const isSnare = subBeat < 0.07 && (
+        Math.floor(beatInBar) === 1 || Math.floor(beatInBar) === 3
+      )
+      if (isSnare) {
+        const sEnv = 1 - subBeat / 0.07
+        L[i] += (Math.random() * 2 - 1) * sEnv * 0.13 + Math.sin(t * 180 * Math.PI * 2) * sEnv * 0.08
+        R[i] += (Math.random() * 2 - 1) * sEnv * 0.13 + Math.sin(t * 180 * Math.PI * 2) * sEnv * 0.08
+      }
+
+      // 하이햇 (오프비트에 오픈)
+      if ((eighthBeat % 1) < 0.04) {
+        const isOpen = Math.floor(eighthBeat) % 2 === 1
+        const hhEnv = Math.max(0, 1 - (eighthBeat % 1) / (isOpen ? 0.04 : 0.015))
+        const hh = (Math.random() * 2 - 1) * hhEnv * 0.07
+        L[i] += hh * 0.7
+        R[i] += hh * 1.2
+      }
+
+      // 쉐이커 (16분음표)
+      if (sixteenth < 0.03) {
+        const sh = (Math.random() * 2 - 1) * (1 - sixteenth / 0.03) * 0.025
+        L[i] += sh * 1.3
+        R[i] += sh * 0.6
       }
     }
 
