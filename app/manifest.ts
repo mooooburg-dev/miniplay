@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'miniplay - 두근두근 벌칙 미니게임',
-    short_name: 'miniplay',
+    name: '미니게임 모음',
+    short_name: '미니게임 모음',
     description: '온가족 함께하는 두근두근 벌칙 미니게임 모음',
     start_url: '/',
     display: 'standalone',
