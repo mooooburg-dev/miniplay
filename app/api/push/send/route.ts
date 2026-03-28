@@ -57,7 +57,9 @@ export async function POST(request: Request) {
     )
 
     return NextResponse.json({ ok: true, sent, failed, total: subscriptions.length })
-  } catch {
-    return NextResponse.json({ error: '전송 실패' }, { status: 500 })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('[Push Send Error]', message)
+    return NextResponse.json({ error: '전송 실패', detail: message }, { status: 500 })
   }
 }
