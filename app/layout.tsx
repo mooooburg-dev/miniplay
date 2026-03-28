@@ -25,6 +25,11 @@ export const metadata: Metadata = {
     description: '온가족 함께하는 두근두근 벌칙 게임!',
     url: 'https://miniplay.kr',
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'miniplay',
+  },
 }
 
 export default function RootLayout({
