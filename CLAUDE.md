@@ -25,9 +25,13 @@
 ```
 miniplay/
 ├── app/
-│   ├── layout.tsx          # 루트 레이아웃 (Jua 폰트, 메타데이터)
+│   ├── layout.tsx          # 루트 레이아웃 (Jua 폰트, 메타데이터, 애널리틱스)
 │   ├── globals.css         # Tailwind base + 공통 스타일
+│   ├── manifest.ts         # PWA 매니페스트 설정
 │   ├── page.tsx            # 홈 허브 (게임 카드 목록)
+│   ├── icon.png            # 파비콘 (32x32)
+│   ├── apple-icon.png      # Apple Touch Icon (180x180)
+│   ├── api/feedback/       # 피드백 API 라우트
 │   └── game/
 │       ├── roulette/page.tsx
 │       ├── croc/page.tsx
@@ -38,11 +42,17 @@ miniplay/
 │   ├── PlayerSetup.tsx     # 플레이어 이름 설정 UI
 │   ├── TurnBadge.tsx       # "🌟 엄마 차례!" 배지
 │   ├── ScoreBar.tsx        # 플레이어별 점수 칩
-│   └── PenaltyOverlay.tsx  # 벌칙 풀스크린 오버레이
+│   ├── PenaltyOverlay.tsx  # 벌칙 풀스크린 오버레이
+│   ├── BgmToggle.tsx       # BGM 토글 버튼
+│   ├── FeedbackButton.tsx  # 피드백 제출 버튼
+│   └── InstallPrompt.tsx   # iOS PWA 설치 안내
 ├── store/
 │   └── gameStore.ts        # Zustand 전역 상태
 ├── hooks/
-│   └── useAudio.ts         # Web Audio API 사운드 엔진
+│   ├── useAudio.ts         # Web Audio API 효과음 엔진
+│   └── useBgm.ts           # Web Audio API BGM 엔진
+├── lib/
+│   └── gtag.ts             # Google Analytics 연동
 └── types/
     └── index.ts            # 타입 정의 + GAMES 메타 배열
 ```
@@ -70,16 +80,18 @@ npm run lint     # ESLint 검사
 const { players, scores, turn, nextTurn, addPenalty } = useGameStore();
 ```
 
-### 사운드 (useAudio)
+### 사운드
 
-모든 게임 페이지에서 `useAudio` 훅만 import해서 사용한다.
-Web Audio API 기반이므로 외부 파일 없이 동작한다.
+모든 오디오는 Web Audio API 기반으로 외부 파일 없이 동작한다.
+AudioContext는 사용자 인터랙션 시점에 lazy 초기화된다 (브라우저 정책 대응).
+
+- **효과음** (`useAudio`): `playClick`, `playDanger`, `playFanfare`, `playPenalty`, `playPump`, `playPop`, `playBombTick`, `playExplosion` 등
+- **BGM** (`useBgm`): 8마디 루핑 신디사이저 BGM (160 BPM, C Major). `BgmToggle` 컴포넌트로 토글.
 
 ```ts
 const { playClick, playDanger, playFanfare, playPenalty } = useAudio();
+const { isPlaying, toggle } = useBgm();
 ```
-
-AudioContext는 사용자 인터랙션 시점에 lazy 초기화된다 (브라우저 정책 대응).
 
 ### 라우팅
 
@@ -206,7 +218,7 @@ useEffect(() => {
 - `app/page.tsx` (홈): **Server Component** — `useGameStore`를 직접 사용하지 않는다.
   `GameCard`, `PlayerSetup`이 `'use client'`로 클라이언트 상태를 처리한다.
 - `app/game/*/page.tsx`: 모두 `'use client'` — 게임 로직은 전부 클라이언트 사이드.
-- `components/`: `PenaltyOverlay`, `GameCard`, `PlayerSetup`은 `'use client'`.
+- `components/`: `PenaltyOverlay`, `GameCard`, `PlayerSetup`, `BgmToggle`, `FeedbackButton`, `InstallPrompt`는 `'use client'`.
   `TurnBadge`, `ScoreBar`는 단순 표시 컴포넌트로 `'use client'` 불필요.
 
 ---
