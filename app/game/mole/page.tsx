@@ -12,7 +12,7 @@ const GRID_SIZE = 9
 const ROUND_TIME = 15 // 초
 
 type Level = 'easy' | 'normal' | 'hard'
-type Phase = 'ready' | 'playing' | 'result'
+type Phase = 'ready' | 'countdown' | 'playing' | 'result'
 
 const LEVEL_CONFIG: Record<Level, {
   label: string
@@ -39,6 +39,7 @@ export default function MolePage() {
   const [roundScores, setRoundScores] = useState<number[]>([])
   const [currentScore, setCurrentScore] = useState(0)
   const [timeLeft, setTimeLeft] = useState(ROUND_TIME)
+  const [countdown, setCountdown] = useState(3)
   const [penaltyPlayer, setPenaltyPlayer] = useState('')
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0)
 
@@ -91,16 +92,8 @@ export default function MolePage() {
     }, interval)
   }, [showRandomMole])
 
-  const startRound = useCallback(() => {
-    if (!trackedRef.current) {
-      trackEvent('game_start', { game_name: 'mole' })
-      trackedRef.current = true
-    }
-
+  const beginPlaying = useCallback(() => {
     setPhase('playing')
-    setCurrentScore(0)
-    setTimeLeft(ROUND_TIME)
-    setMoles(Array(GRID_SIZE).fill(false))
 
     // 타이머 시작
     timerRef.current = setInterval(() => {
@@ -119,6 +112,30 @@ export default function MolePage() {
     showRandomMole()
     scheduleNextMole()
   }, [clearTimers, showRandomMole, scheduleNextMole])
+
+  const startRound = useCallback(() => {
+    if (!trackedRef.current) {
+      trackEvent('game_start', { game_name: 'mole' })
+      trackedRef.current = true
+    }
+
+    setCurrentScore(0)
+    setTimeLeft(ROUND_TIME)
+    setMoles(Array(GRID_SIZE).fill(false))
+    setCountdown(3)
+    setPhase('countdown')
+
+    let count = 3
+    const countdownTimer = setInterval(() => {
+      count -= 1
+      if (count <= 0) {
+        clearInterval(countdownTimer)
+        beginPlaying()
+      } else {
+        setCountdown(count)
+      }
+    }, 1000)
+  }, [beginPlaying])
 
   const whackMole = useCallback(
     (idx: number) => {
@@ -238,6 +255,18 @@ export default function MolePage() {
             >
               시작! 🐹
             </button>
+          </div>
+        )}
+
+        {phase === 'countdown' && (
+          <div className="flex flex-col items-center justify-center gap-4 mt-12">
+            <div
+              key={countdown}
+              className="text-8xl sm:text-9xl font-jua text-[#e74c3c] animate-land-pop"
+            >
+              {countdown}
+            </div>
+            <p className="text-lg sm:text-xl font-jua text-gray-400">준비하세요!</p>
           </div>
         )}
 
