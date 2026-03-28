@@ -3,6 +3,7 @@ import Script from 'next/script'
 import { Jua } from 'next/font/google'
 import { GA_ID } from '@/lib/gtag'
 import { BgmToggle } from '@/components/BgmToggle'
+import { NotificationToggle } from '@/components/NotificationToggle'
 import './globals.css'
 
 const jua = Jua({
@@ -55,6 +56,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="font-jua">
+        <NotificationToggle />
         <BgmToggle />
         {children}
       </body>
