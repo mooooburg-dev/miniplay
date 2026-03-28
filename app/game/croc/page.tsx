@@ -78,18 +78,18 @@ export default function CrocPage() {
       <div className="game-screen">
         <button
           onClick={() => router.push('/')}
-          className="self-start bg-white/75 rounded-full px-4 py-2 text-sm text-gray-400 font-jua mb-2 active:scale-95 transition-transform"
+          className="self-start bg-white/75 rounded-full px-4 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-base text-gray-400 font-jua mb-2 active:scale-95 transition-transform"
         >
           ← 홈으로
         </button>
 
-        <h1 className="text-3xl font-jua text-[#27ae60] mb-2">🐊 악어 이빨 뽑기</h1>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-jua text-[#27ae60] mb-2">🐊 악어 이빨 뽑기</h1>
         <TurnBadge playerName={players[turn]} color="#27ae60" shadowColor="#a8e6cf" />
         <ScoreBar players={players} scores={scores} currentTurn={turn} activeColor="#27ae60" />
 
         {/* 악어 입 */}
         <div
-          className="rounded-[28px_28px_55px_55px] px-4 pt-4 pb-7 w-full max-w-[350px]"
+          className="rounded-[28px_28px_55px_55px] sm:rounded-[36px_36px_65px_65px] px-4 pt-4 pb-7 sm:px-6 sm:pt-6 sm:pb-9 md:px-8 md:pt-8 md:pb-11 w-full max-w-[350px] sm:max-w-[480px] md:max-w-[560px]"
           style={{
             background: 'linear-gradient(180deg, #2ecc71, #27ae60)',
             boxShadow: '0 8px 0 #1e8449, 0 12px 24px rgba(46,204,113,0.3)',
@@ -100,7 +100,7 @@ export default function CrocPage() {
             {['', ''].map((_, i) => (
               <div
                 key={i}
-                className="w-9 h-9 bg-[#f1c40f] rounded-full flex items-center justify-center text-lg animate-eye-blink"
+                className="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-[#f1c40f] rounded-full flex items-center justify-center text-lg sm:text-xl md:text-2xl animate-eye-blink"
                 style={{
                   boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
                   animationDelay: i === 1 ? '0.4s' : '0s',
@@ -112,20 +112,20 @@ export default function CrocPage() {
           </div>
 
           {/* 이빨 위 줄 */}
-          <div className="flex gap-1.5 justify-center mb-1.5">
+          <div className="flex gap-1.5 sm:gap-2.5 md:gap-3 justify-center mb-1.5 sm:mb-2.5">
             {topTeeth.map((state, i) => (
               <ToothButton key={i} state={state} onClick={() => pullTooth(i)} />
             ))}
           </div>
           {/* 이빨 아래 줄 */}
-          <div className="flex gap-1.5 justify-center">
+          <div className="flex gap-1.5 sm:gap-2.5 md:gap-3 justify-center">
             {botTeeth.map((state, i) => (
               <ToothButton key={i + 6} state={state} onClick={() => pullTooth(i + 6)} />
             ))}
           </div>
         </div>
 
-        <p className="mt-4 text-sm text-[#27ae60] font-jua text-center">{hint}</p>
+        <p className="mt-4 text-sm sm:text-base md:text-lg text-[#27ae60] font-jua text-center">{hint}</p>
       </div>
 
       <PenaltyOverlay
@@ -143,7 +143,7 @@ function ToothButton({ state, onClick }: { state: ToothState; onClick: () => voi
       onClick={onClick}
       disabled={state !== 'idle'}
       className={`
-        w-11 h-16 border-none rounded-b-[22px] relative transition-all duration-150
+        w-11 h-16 sm:w-16 sm:h-20 md:w-[4.5rem] md:h-24 border-none rounded-b-[22px] sm:rounded-b-[28px] relative transition-all duration-150
         ${state === 'idle'
           ? 'bg-white cursor-pointer hover:-translate-y-1 active:translate-y-1'
           : ''}
@@ -157,10 +157,10 @@ function ToothButton({ state, onClick }: { state: ToothState; onClick: () => voi
       }
     >
       {state === 'danger' && (
-        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-lg">💀</span>
+        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-lg sm:text-xl md:text-2xl">💀</span>
       )}
       {state === 'idle' && (
-        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-lg opacity-15">🦷</span>
+        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-lg sm:text-xl md:text-2xl opacity-15">🦷</span>
       )}
     </button>
   )

@@ -29,8 +29,8 @@ export function PlayerSetup() {
   }
 
   return (
-    <div className="glass-card w-full max-w-sm mb-6 p-5">
-      <h3 className="text-[13px] text-gray-500 text-center mb-4 font-jua flex justify-center items-center gap-1.5 opacity-80">
+    <div className="glass-card w-full max-w-sm sm:max-w-lg md:max-w-xl lg:max-w-2xl mb-6 p-5 sm:p-6 md:p-8">
+      <h3 className="text-[13px] sm:text-sm md:text-base text-gray-500 text-center mb-4 font-jua flex justify-center items-center gap-1.5 opacity-80">
         <span>👨‍👩‍👦</span> 누가 플레이하나요? (2~6명)
       </h3>
 
@@ -41,7 +41,7 @@ export function PlayerSetup() {
             <button
               key={i}
               onClick={() => removePlayer(i)}
-              className="flex items-center gap-1.5 bg-gradient-to-r from-[#FFB3CC] to-[#FF9EBC] text-white shadow-[0_4px_12px_rgba(255,179,204,0.4)] rounded-full px-4 py-1.5 font-jua text-sm active:scale-95 transition-all hover:-translate-y-0.5 group"
+              className="flex items-center gap-1.5 bg-gradient-to-r from-[#FFB3CC] to-[#FF9EBC] text-white shadow-[0_4px_12px_rgba(255,179,204,0.4)] rounded-full px-4 py-1.5 sm:px-5 sm:py-2 font-jua text-sm sm:text-base active:scale-95 transition-all hover:-translate-y-0.5 group"
             >
               {name}
               <span className="bg-white/30 rounded-full w-4 h-4 flex items-center justify-center text-[10px] ml-0.5 group-hover:bg-white/50 transition-colors">✕</span>
@@ -57,7 +57,7 @@ export function PlayerSetup() {
             <button
               key={preset.name}
               onClick={() => addPlayerByName(preset.name)}
-              className="bg-white/50 backdrop-blur-sm border border-white/80 rounded-full px-3.5 py-1.5 font-jua text-xs text-[#8c8d91] active:scale-95 hover:bg-white hover:text-[#555] transition-all hover:shadow-[0_2px_8px_rgba(0,0,0,0.05)]"
+              className="bg-white/50 backdrop-blur-sm border border-white/80 rounded-full px-3.5 py-1.5 sm:px-4 sm:py-2 font-jua text-xs sm:text-sm text-[#8c8d91] active:scale-95 hover:bg-white hover:text-[#555] transition-all hover:shadow-[0_2px_8px_rgba(0,0,0,0.05)]"
             >
               {preset.label}
             </button>
@@ -67,7 +67,7 @@ export function PlayerSetup() {
           {!showInput ? (
             <button
               onClick={() => setShowInput(true)}
-              className="bg-[#E6D5FF]/40 border border-[#E6D5FF] rounded-full px-3.5 py-1.5 font-jua text-xs text-[#9b85d6] active:scale-95 hover:bg-[#E6D5FF]/70 transition-all hover:shadow-[0_2px_8px_rgba(155,133,214,0.2)] flex items-center gap-1"
+              className="bg-[#E6D5FF]/40 border border-[#E6D5FF] rounded-full px-3.5 py-1.5 sm:px-4 sm:py-2 font-jua text-xs sm:text-sm text-[#9b85d6] active:scale-95 hover:bg-[#E6D5FF]/70 transition-all hover:shadow-[0_2px_8px_rgba(155,133,214,0.2)] flex items-center gap-1"
             >
               <span>✏️</span> 직접 입력
             </button>

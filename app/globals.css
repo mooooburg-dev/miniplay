@@ -34,6 +34,7 @@ body {
 /* 게임 공통 레이아웃 */
 .game-screen {
   @apply min-h-screen flex flex-col items-center px-4 pt-4 pb-12;
+  @apply sm:px-8 sm:pt-6 md:px-12 lg:px-16;
 }
 
 /* 액션 버튼 공통 글로시 효과 */

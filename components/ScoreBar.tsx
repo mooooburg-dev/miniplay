@@ -12,11 +12,11 @@ export function ScoreBar({
   activeColor = '#ff6b9d',
 }: ScoreBarProps) {
   return (
-    <div className="flex flex-wrap gap-1.5 justify-center mb-3.5">
+    <div className="flex flex-wrap gap-1.5 sm:gap-2.5 justify-center mb-3.5">
       {players.map((player, i) => (
         <span
           key={i}
-          className="px-3.5 py-1 rounded-full text-xs font-jua transition-all duration-200"
+          className="px-3.5 py-1 sm:px-5 sm:py-1.5 rounded-full text-xs sm:text-sm md:text-base font-jua transition-all duration-200"
           style={
             i === currentTurn
               ? { background: activeColor, color: 'white', transform: 'scale(1.08)' }

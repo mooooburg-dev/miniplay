@@ -22,7 +22,7 @@ export default function BalloonPage() {
   const [penaltyPlayer, setPenaltyPlayer] = useState('')
 
   const ratio = popped ? 1 : pumps / popAt
-  const balloonSize = 5 + ratio * 9   // 5rem → 14rem
+  const balloonSize = 5 + ratio * 9   // 5rem → 14rem (sm/md에서는 CSS scale로 추가 확대)
   const isWarning = ratio >= 0.6
   const isDanger = ratio >= 0.85
 
@@ -71,17 +71,17 @@ export default function BalloonPage() {
       <div className="game-screen">
         <button
           onClick={() => router.push('/')}
-          className="self-start bg-white/75 rounded-full px-4 py-2 text-sm text-gray-400 font-jua mb-2 active:scale-95 transition-transform"
+          className="self-start bg-white/75 rounded-full px-4 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-base text-gray-400 font-jua mb-2 active:scale-95 transition-transform"
         >
           ← 홈으로
         </button>
 
-        <h1 className="text-3xl font-jua text-[#7b61ff] mb-2">🎈 풍선 팡</h1>
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-jua text-[#7b61ff] mb-2">🎈 풍선 팡</h1>
         <TurnBadge playerName={players[turn]} color="#7b61ff" shadowColor="#c9b8ff" />
         <ScoreBar players={players} scores={scores} currentTurn={turn} activeColor="#7b61ff" />
 
         {/* 풍선 스테이지 */}
-        <div className="relative h-[270px] flex items-center justify-center w-full mb-2">
+        <div className="relative h-[270px] sm:h-[380px] md:h-[440px] flex items-center justify-center w-full mb-2">
           <span
             className={`select-none block transition-[font-size] duration-[250ms] [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)]
               ${isDanger && !popped ? 'animate-balloon-shake' : ''}
@@ -98,13 +98,13 @@ export default function BalloonPage() {
           </span>
 
           {/* 펌프 카운터 */}
-          <div className="absolute bottom-1.5 bg-white/85 rounded-full px-5 py-1 text-sm font-jua text-[#7b61ff]">
+          <div className="absolute bottom-1.5 bg-white/85 rounded-full px-5 py-1 sm:px-6 sm:py-1.5 text-sm sm:text-base font-jua text-[#7b61ff]">
             {pumps}번 펌프
           </div>
         </div>
 
         {/* 위험도 바 */}
-        <div className="w-full max-w-xs h-3 bg-white/50 rounded-lg overflow-hidden mb-2">
+        <div className="w-full max-w-xs sm:max-w-sm md:max-w-md h-3 sm:h-4 bg-white/50 rounded-lg overflow-hidden mb-2">
           <div
             className="h-full rounded-lg transition-[width,background] duration-[250ms]"
             style={{
@@ -115,13 +115,13 @@ export default function BalloonPage() {
         </div>
 
         {/* 메시지 */}
-        <p className="text-sm font-jua text-[#7b61ff] min-h-[1.4rem] text-center mb-4">{msgText}</p>
+        <p className="text-sm sm:text-base md:text-lg font-jua text-[#7b61ff] min-h-[1.4rem] text-center mb-4">{msgText}</p>
 
         {/* 버튼 */}
         <button
           onClick={pump}
           disabled={popped}
-          className="text-3xl font-jua text-white px-12 py-4 rounded-full disabled:opacity-50 active:translate-y-1.5 transition-transform"
+          className="text-3xl sm:text-4xl md:text-5xl font-jua text-white px-12 py-4 sm:px-14 sm:py-5 rounded-full disabled:opacity-50 active:translate-y-1.5 transition-transform"
           style={{
             background: 'linear-gradient(145deg, #7b61ff, #9b85ff)',
             boxShadow: '0 8px 0 #5a47cc',

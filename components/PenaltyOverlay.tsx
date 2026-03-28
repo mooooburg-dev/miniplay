@@ -82,25 +82,25 @@ export function PenaltyOverlay({ isOpen, loserName, onRetry }: PenaltyOverlayPro
 
       {/* 메인 콘텐츠 */}
       <div className="text-center animate-penalty-in">
-        <span className="text-8xl block mb-4 animate-wiggle">{emoji}</span>
-        <p className="text-white/80 font-jua text-lg mb-1">벌칙 당첨!</p>
+        <span className="text-8xl sm:text-9xl md:text-[10rem] block mb-4 animate-wiggle">{emoji}</span>
+        <p className="text-white/80 font-jua text-lg sm:text-xl md:text-2xl mb-1">벌칙 당첨!</p>
         <p
-          className="text-white font-jua text-5xl mb-1"
+          className="text-white font-jua text-5xl sm:text-6xl md:text-7xl mb-1"
           style={{ textShadow: '3px 3px 0 rgba(0,0,0,0.15)' }}
         >
           {loserName}
         </p>
-        <p className="text-white font-jua text-2xl mb-8">이(가) 걸렸다! 🎊</p>
-        <div className="flex gap-3 justify-center">
+        <p className="text-white font-jua text-2xl sm:text-3xl md:text-4xl mb-8">이(가) 걸렸다! 🎊</p>
+        <div className="flex gap-3 sm:gap-4 justify-center">
           <button
             onClick={onRetry}
-            className="px-7 py-3 rounded-full bg-white text-[#ff6b9d] font-jua text-lg shadow-md active:translate-y-1 transition-transform"
+            className="px-7 py-3 sm:px-9 sm:py-4 rounded-full bg-white text-[#ff6b9d] font-jua text-lg sm:text-xl md:text-2xl shadow-md active:translate-y-1 transition-transform"
           >
             🔄 다시 하기
           </button>
           <button
             onClick={() => router.push('/')}
-            className="px-7 py-3 rounded-full font-jua text-lg text-white border-2 border-white/40 bg-white/25 active:translate-y-1 transition-transform"
+            className="px-7 py-3 sm:px-9 sm:py-4 rounded-full font-jua text-lg sm:text-xl md:text-2xl text-white border-2 border-white/40 bg-white/25 active:translate-y-1 transition-transform"
           >
             🏠 홈으로
           </button>
