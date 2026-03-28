@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
 import { Jua } from 'next/font/google'
 import { GA_ID } from '@/lib/gtag'
+import { BgmToggle } from '@/components/BgmToggle'
 import './globals.css'
 
 const jua = Jua({
@@ -53,7 +54,10 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className="font-jua">{children}</body>
+      <body className="font-jua">
+        <BgmToggle />
+        {children}
+      </body>
     </html>
   )
 }
