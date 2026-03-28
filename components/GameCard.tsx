@@ -9,9 +9,11 @@ interface GameCardProps {
 
 export function GameCard({ game }: GameCardProps) {
   const router = useRouter()
-  const { setCurrentGame, resetTurn } = useGameStore()
+  const { players, setCurrentGame, resetTurn } = useGameStore()
+  const disabled = players.length < 2
 
   const handleClick = () => {
+    if (disabled) return
     setCurrentGame(game.id)
     resetTurn()
     router.push(game.path)
@@ -20,7 +22,8 @@ export function GameCard({ game }: GameCardProps) {
   return (
     <button
       onClick={handleClick}
-      className="bg-white rounded-3xl p-5 text-center transition-all duration-150 active:translate-y-1 hover:-translate-y-0.5 font-jua w-full"
+      disabled={disabled}
+      className={`bg-white rounded-3xl p-5 text-center transition-all duration-150 font-jua w-full ${disabled ? 'opacity-40 saturate-0' : 'active:translate-y-1 hover:-translate-y-0.5'}`}
       style={{ boxShadow: `0 6px 0 ${game.shadow}` }}
     >
       <span className="text-5xl block mb-2">{game.emoji}</span>

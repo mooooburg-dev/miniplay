@@ -1,60 +1,117 @@
 'use client'
+import { useState } from 'react'
 import { useGameStore } from '@/store/gameStore'
 
+const PRESETS = [
+  { label: '👩 엄마', name: '엄마' },
+  { label: '👨 아빠', name: '아빠' },
+  { label: '👵 할머니', name: '할머니' },
+  { label: '👴 할아버지', name: '할아버지' },
+  { label: '👦 오빠', name: '오빠' },
+  { label: '👧 언니', name: '언니' },
+  { label: '👦 형', name: '형' },
+  { label: '👧 누나', name: '누나' },
+]
+
 export function PlayerSetup() {
-  const { players, addPlayer, removePlayer, updatePlayerName, resetScores } =
+  const { players, addPlayerByName, removePlayer, resetScores } =
     useGameStore()
+  const [customName, setCustomName] = useState('')
+  const [showInput, setShowInput] = useState(false)
+
+  const handleAddCustom = () => {
+    const trimmed = customName.trim()
+    if (trimmed && players.length < 6 && !players.includes(trimmed)) {
+      addPlayerByName(trimmed)
+      setCustomName('')
+      setShowInput(false)
+    }
+  }
 
   return (
     <div className="bg-white/80 rounded-2xl p-4 w-full max-w-sm mb-5">
-      <h3 className="text-xs text-gray-400 text-center mb-2.5 font-jua">
-        👨‍👩‍👦 플레이어 설정 (최대 6명)
+      <h3 className="text-xs text-gray-400 text-center mb-3 font-jua">
+        👨‍👩‍👦 누가 플레이하나요? (2~6명)
       </h3>
 
-      {/* 플레이어 칩 목록 */}
-      <div className="flex flex-wrap gap-2 justify-center mb-2.5">
-        {players.map((name, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-1 bg-[#ffd6e0] rounded-full px-3 py-1.5"
-          >
-            <input
-              type="text"
-              defaultValue={name}
-              maxLength={5}
-              onBlur={(e) => updatePlayerName(i, e.target.value)}
-              onClick={(e) => (e.target as HTMLInputElement).select()}
-              className="bg-transparent border-none outline-none font-jua text-sm text-gray-600 w-14 text-center focus:text-[#ff6b9d]"
-            />
-            {players.length > 2 && (
+      {/* 선택된 플레이어 */}
+      {players.length > 0 && (
+        <div className="flex flex-wrap gap-2 justify-center mb-3">
+          {players.map((name, i) => (
+            <button
+              key={i}
+              onClick={() => removePlayer(i)}
+              className="flex items-center gap-1 bg-[#ffd6e0] rounded-full px-3 py-1.5 font-jua text-sm text-gray-600 active:scale-95 transition-transform"
+            >
+              {name}
+              <span className="text-[#ffaabb] text-xs">✕</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* 프리셋 버튼 */}
+      {players.length < 6 && (
+        <div className="flex flex-wrap gap-2 justify-center mb-3">
+          {PRESETS.filter((p) => !players.includes(p.name)).map((preset) => (
+            <button
+              key={preset.name}
+              onClick={() => addPlayerByName(preset.name)}
+              className="border-2 border-dashed border-[#ffb3cc] rounded-full px-3 py-1.5 font-jua text-xs text-[#cc7a94] active:scale-95 active:bg-[#fff0f5] transition-all"
+            >
+              {preset.label}
+            </button>
+          ))}
+
+          {/* 직접 입력 토글 */}
+          {!showInput ? (
+            <button
+              onClick={() => setShowInput(true)}
+              className="border-2 border-dashed border-[#c8b4ff] rounded-full px-3 py-1.5 font-jua text-xs text-[#9b85d6] active:scale-95 active:bg-[#f5f0ff] transition-all"
+            >
+              ✏️ 직접 입력
+            </button>
+          ) : (
+            <div className="flex items-center gap-1.5 w-full justify-center mt-1">
+              <input
+                type="text"
+                value={customName}
+                onChange={(e) => setCustomName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddCustom()}
+                placeholder="이름 입력"
+                maxLength={5}
+                autoFocus
+                className="border-2 border-[#c8b4ff] rounded-full px-3 py-1.5 font-jua text-sm text-gray-600 w-24 text-center outline-none focus:border-[#9b85d6]"
+              />
               <button
-                onClick={() => removePlayer(i)}
-                className="text-[#ffaabb] text-sm leading-none hover:text-[#ff6b9d]"
+                onClick={handleAddCustom}
+                className="bg-[#c8b4ff] text-white rounded-full px-3 py-1.5 font-jua text-xs active:scale-95 transition-transform"
+              >
+                추가
+              </button>
+              <button
+                onClick={() => {
+                  setShowInput(false)
+                  setCustomName('')
+                }}
+                className="text-gray-300 text-sm"
               >
                 ✕
               </button>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* 추가 버튼 */}
-      {players.length < 6 && (
-        <button
-          onClick={addPlayer}
-          className="block mx-auto border-2 border-dashed border-[#ffb3cc] rounded-full px-4 py-1 font-jua text-xs text-[#ffb3cc] hover:text-[#ff6b9d] hover:border-[#ff6b9d] transition-colors"
-        >
-          ＋ 플레이어 추가
-        </button>
+            </div>
+          )}
+        </div>
       )}
 
       {/* 점수 초기화 */}
-      <button
-        onClick={resetScores}
-        className="block mx-auto mt-2 text-xs text-gray-300 font-jua hover:text-gray-400 transition-colors"
-      >
-        🔄 점수 초기화
-      </button>
+      {players.length > 0 && (
+        <button
+          onClick={resetScores}
+          className="block mx-auto mt-1 text-xs text-gray-300 font-jua hover:text-gray-400 transition-colors"
+        >
+          🔄 점수 초기화
+        </button>
+      )}
     </div>
   )
 }

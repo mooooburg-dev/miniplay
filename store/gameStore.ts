@@ -9,6 +9,7 @@ interface GameState {
 
   // Player management
   addPlayer: () => void
+  addPlayerByName: (name: string) => void
   removePlayer: (index: number) => void
   updatePlayerName: (index: number, name: string) => void
   resetScores: () => void
@@ -23,8 +24,8 @@ interface GameState {
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
-  players: ['엄마', '아빠', '지환이'],
-  scores: [0, 0, 0],
+  players: [],
+  scores: [],
   turn: 0,
   currentGame: null,
 
@@ -33,6 +34,16 @@ export const useGameStore = create<GameState>((set, get) => ({
       if (s.players.length >= 6) return s
       return {
         players: [...s.players, `플레이어${s.players.length + 1}`],
+        scores: [...s.scores, 0],
+      }
+    }),
+
+  addPlayerByName: (name) =>
+    set((s) => {
+      if (s.players.length >= 6) return s
+      if (s.players.includes(name)) return s
+      return {
+        players: [...s.players, name],
         scores: [...s.scores, 0],
       }
     }),
