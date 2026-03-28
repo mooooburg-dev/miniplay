@@ -50,7 +50,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   removePlayer: (index) =>
     set((s) => {
-      if (s.players.length <= 2) return s
+      if (s.players.length <= 0) return s
       const players = s.players.filter((_, i) => i !== index)
       const scores = s.scores.filter((_, i) => i !== index)
       return {
