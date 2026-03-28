@@ -1,6 +1,7 @@
 import { GameCard } from '@/components/GameCard'
 import { PlayerSetup } from '@/components/PlayerSetup'
 import { FeedbackButton } from '@/components/FeedbackButton'
+import { InstallPrompt } from '@/components/InstallPrompt'
 import { GAMES } from '@/types'
 
 export default function HomePage() {
@@ -28,6 +29,8 @@ export default function HomePage() {
       </div>
       {/* 의견함 플로팅 버튼 */}
       <FeedbackButton />
+      {/* iOS PWA 설치 안내 */}
+      <InstallPrompt />
     </main>
   )
 }
