@@ -107,7 +107,7 @@ export default function RoulettePage() {
       <div className="game-screen">
         <button
           onClick={() => { if (timeoutRef.current) clearTimeout(timeoutRef.current); router.push('/') }}
-          className="self-start bg-white/75 rounded-full px-4 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-base text-gray-400 font-jua mb-2 active:scale-95 transition-transform"
+          className="fixed top-4 left-4 z-50 bg-white/70 backdrop-blur-md border border-white/80 rounded-full px-4 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-base text-gray-400 font-jua shadow-[0_4px_16px_rgba(0,0,0,0.08)] active:scale-90 transition-all hover:bg-white/90"
         >
           ← 홈으로
         </button>
