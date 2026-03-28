@@ -47,6 +47,17 @@ body {
 }
 
 /* 악어 이빨 */
+/* 피드백 모달 애니메이션 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
 .tooth-pulled {
   background: #ddd !important;
   box-shadow: 0 2px 0 #bbb !important;

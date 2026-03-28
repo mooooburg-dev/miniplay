@@ -1,5 +1,6 @@
 import { GameCard } from '@/components/GameCard'
 import { PlayerSetup } from '@/components/PlayerSetup'
+import { FeedbackButton } from '@/components/FeedbackButton'
 import { GAMES } from '@/types'
 
 export default function HomePage() {
@@ -25,6 +26,8 @@ export default function HomePage() {
           <GameCard key={game.id} game={game} />
         ))}
       </div>
+      {/* 의견함 플로팅 버튼 */}
+      <FeedbackButton />
     </main>
   )
 }
