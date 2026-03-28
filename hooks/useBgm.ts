@@ -9,7 +9,7 @@ interface BgmState {
 }
 
 export const useBgmStore = create<BgmState>((set) => ({
-  playing: false,
+  playing: true,
   toggle: () => set((s) => ({ playing: !s.playing })),
   setPlaying: (v) => set({ playing: v }),
 }))
