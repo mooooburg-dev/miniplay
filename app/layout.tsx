@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Jua } from 'next/font/google'
 import './globals.css'
 
@@ -8,6 +8,13 @@ const jua = Jua({
   variable: '--font-jua',
   display: 'swap',
 })
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
 
 export const metadata: Metadata = {
   title: '미니게임 모음 🎮 | miniplay',
