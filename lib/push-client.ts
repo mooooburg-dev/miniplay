@@ -9,11 +9,22 @@ export function urlBase64ToUint8Array(base64String: string): Uint8Array {
   return outputArray
 }
 
+async function getRegistration(): Promise<ServiceWorkerRegistration | null> {
+  if (!('serviceWorker' in navigator)) return null
+
+  // navigator.serviceWorker.ready는 SW 미등록 시 영원히 대기하므로 타임아웃 적용
+  const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000))
+  const ready = navigator.serviceWorker.ready
+  return Promise.race([ready, timeout])
+}
+
 export async function subscribeToPush(): Promise<PushSubscription | null> {
   const permission = await Notification.requestPermission()
   if (permission !== 'granted') return null
 
-  const registration = await navigator.serviceWorker.ready
+  const registration = await getRegistration()
+  if (!registration) throw new Error('Service Worker를 찾을 수 없습니다')
+
   const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
   if (!vapidKey) throw new Error('VAPID public key not configured')
 
@@ -32,7 +43,9 @@ export async function subscribeToPush(): Promise<PushSubscription | null> {
 }
 
 export async function unsubscribeFromPush(): Promise<void> {
-  const registration = await navigator.serviceWorker.ready
+  const registration = await getRegistration()
+  if (!registration) return
+
   const subscription = await registration.pushManager.getSubscription()
   if (!subscription) return
 
@@ -47,6 +60,9 @@ export async function unsubscribeFromPush(): Promise<void> {
 
 export async function getExistingSubscription(): Promise<PushSubscription | null> {
   if (!('PushManager' in window)) return null
-  const registration = await navigator.serviceWorker.ready
+
+  const registration = await getRegistration()
+  if (!registration) return null
+
   return registration.pushManager.getSubscription()
 }

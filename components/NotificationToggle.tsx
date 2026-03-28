@@ -9,63 +9,79 @@ export function NotificationToggle() {
   const [status, setStatus] = useState<Status>('loading')
 
   useEffect(() => {
-    // PushManager 미지원 환경
+    console.log('[Push] init check:', {
+      Notification: 'Notification' in window,
+      serviceWorker: 'serviceWorker' in navigator,
+      PushManager: 'PushManager' in window,
+    })
+
     if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+      console.log('[Push] unsupported environment')
       setStatus('unsupported')
       return
     }
 
     if (Notification.permission === 'denied') {
+      console.log('[Push] permission denied')
       setStatus('denied')
       return
     }
 
-    // SW 준비 후 구독 상태 확인
+    console.log('[Push] checking existing subscription...')
     let cancelled = false
     getExistingSubscription()
       .then((sub) => {
+        console.log('[Push] existing subscription:', sub ? 'found' : 'none')
         if (!cancelled) setStatus(sub ? 'subscribed' : 'unsubscribed')
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error('[Push] subscription check failed:', err)
         if (!cancelled) setStatus('unsubscribed')
       })
     return () => { cancelled = true }
   }, [])
 
   const toggle = useCallback(async () => {
+    console.log('[Push] toggle clicked, current status:', status)
     try {
       if (status === 'subscribed') {
         await unsubscribeFromPush()
         setStatus('unsubscribed')
       } else {
         const sub = await subscribeToPush()
+        console.log('[Push] subscribe result:', sub ? 'success' : 'denied')
         setStatus(sub ? 'subscribed' : 'denied')
       }
     } catch (err) {
       console.error('[Push] toggle error:', err)
-      // 권한이 거부된 경우
       if (Notification.permission === 'denied') {
         setStatus('denied')
       }
     }
   }, [status])
 
-  // 지원하지 않는 환경에서는 렌더하지 않음
-  if (status === 'loading' || status === 'unsupported') return null
+  console.log('[Push] render, status:', status)
 
+  // unsupported 환경에서만 숨김. loading 중에도 버튼 표시 (disabled)
+  if (status === 'unsupported') return null
+
+  const isLoading = status === 'loading'
   const isSubscribed = status === 'subscribed'
   const isDenied = status === 'denied'
+  const isDisabled = isLoading || isDenied
 
   return (
     <button
-      onClick={isDenied ? undefined : toggle}
-      className={`fixed top-4 right-[4.25rem] sm:right-[4.75rem] z-50 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/70 backdrop-blur-md border border-white/80 shadow-[0_4px_16px_rgba(255,182,193,0.25)] flex items-center justify-center active:scale-90 transition-all hover:bg-white/90 hover:shadow-[0_4px_20px_rgba(255,182,193,0.4)] ${isDenied ? 'opacity-50 cursor-not-allowed' : ''}`}
+      onClick={isDisabled ? undefined : toggle}
+      className={`fixed top-4 right-[4.25rem] sm:right-[4.75rem] z-50 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/70 backdrop-blur-md border border-white/80 shadow-[0_4px_16px_rgba(255,182,193,0.25)] flex items-center justify-center active:scale-90 transition-all hover:bg-white/90 hover:shadow-[0_4px_20px_rgba(255,182,193,0.4)] ${isDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
       title={
-        isDenied
-          ? '알림이 차단됨 - 브라우저 설정에서 허용해주세요'
-          : isSubscribed
-            ? '알림 끄기'
-            : '알림 켜기'
+        isLoading
+          ? '알림 준비 중...'
+          : isDenied
+            ? '알림이 차단됨 - 브라우저 설정에서 허용해주세요'
+            : isSubscribed
+              ? '알림 끄기'
+              : '알림 켜기'
       }
       aria-label={isSubscribed ? '알림 끄기' : '알림 켜기'}
     >
