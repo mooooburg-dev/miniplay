@@ -2,11 +2,16 @@ import { NextResponse } from 'next/server'
 import webPush from 'web-push'
 import { getAllSubscriptions, removeSubscription } from '@/lib/push-subscriptions'
 
-webPush.setVapidDetails(
-  process.env.VAPID_SUBJECT || 'mailto:admin@miniplay.kr',
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-  process.env.VAPID_PRIVATE_KEY!,
-)
+function getWebPush() {
+  webPush.setVapidDetails(
+    process.env.VAPID_SUBJECT || 'mailto:admin@miniplay.kr',
+    process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+    process.env.VAPID_PRIVATE_KEY!,
+  )
+  return webPush
+}
+
+export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request) {
   // 관리자 인증
@@ -22,6 +27,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'title과 body는 필수입니다' }, { status: 400 })
     }
 
+    const push = getWebPush()
     const payload = JSON.stringify({ title, body, url, tag })
     const subscriptions = await getAllSubscriptions()
 
@@ -31,7 +37,7 @@ export async function POST(request: Request) {
     await Promise.allSettled(
       subscriptions.map(async (sub) => {
         try {
-          await webPush.sendNotification(
+          await push.sendNotification(
             {
               endpoint: sub.endpoint!,
               keys: sub.keys as { p256dh: string; auth: string },
