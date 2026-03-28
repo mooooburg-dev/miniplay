@@ -85,7 +85,7 @@ export function FeedbackButton() {
                   <h2 className="text-xl text-[#ff6b9d]">우리 가족 의견함 💌</h2>
                   <button
                     onClick={close}
-                    className="text-gray-400 text-xl leading-none"
+                    className="text-gray-600 text-xl leading-none"
                   >
                     ✕
                   </button>
@@ -100,7 +100,7 @@ export function FeedbackButton() {
                       className={`px-3 py-2 rounded-2xl text-sm border transition-all ${
                         selectedType === type
                           ? 'bg-[#ff6b9d]/15 border-[#ff6b9d]/40 text-[#ff6b9d]'
-                          : 'bg-white/50 border-white/60 text-gray-500'
+                          : 'bg-white/50 border-white/60 text-gray-700'
                       }`}
                     >
                       {type}
@@ -115,9 +115,9 @@ export function FeedbackButton() {
                   placeholder="여기에 적어주세요 ✏️"
                   maxLength={500}
                   rows={3}
-                  className="w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/60 text-gray-700 placeholder:text-gray-300 resize-none focus:outline-none focus:ring-2 focus:ring-[#ff6b9d]/30 font-jua text-sm"
+                  className="w-full px-4 py-3 rounded-2xl bg-white/60 border border-white/60 text-gray-700 placeholder:text-gray-400 resize-none focus:outline-none focus:ring-2 focus:ring-[#ff6b9d]/30 font-jua text-sm"
                 />
-                <div className="text-right text-xs text-gray-300 mt-1 mr-1">
+                <div className="text-right text-xs text-gray-500 mt-1 mr-1">
                   {message.length}/500
                 </div>
 
