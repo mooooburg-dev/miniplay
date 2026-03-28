@@ -55,7 +55,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className="font-jua">
+      <body className="font-jua" suppressHydrationWarning>
         <NotificationToggle />
         <BgmToggle />
         {children}
