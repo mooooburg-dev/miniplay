@@ -1,12 +1,10 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useGameStore } from '@/store/gameStore'
 
 const PRESETS = [
   { label: '👩 엄마', name: '엄마' },
   { label: '👨 아빠', name: '아빠' },
-  { label: '👵 할머니', name: '할머니' },
-  { label: '👴 할아버지', name: '할아버지' },
   { label: '👦 오빠', name: '오빠' },
   { label: '👧 언니', name: '언니' },
   { label: '👦 형', name: '형' },
@@ -14,8 +12,12 @@ const PRESETS = [
 ]
 
 export function PlayerSetup() {
-  const { players, addPlayerByName, removePlayer, resetScores } =
+  const { players, addPlayerByName, removePlayer, resetScores, hydrate } =
     useGameStore()
+
+  useEffect(() => {
+    hydrate()
+  }, [hydrate])
   const [customName, setCustomName] = useState('')
   const [showInput, setShowInput] = useState(false)
 

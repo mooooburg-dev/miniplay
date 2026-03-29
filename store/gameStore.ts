@@ -1,11 +1,35 @@
 import { create } from 'zustand'
 import type { GameType } from '@/types'
 
+const STORAGE_KEY = 'miniplay-players'
+
+function loadPlayers(): string[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed
+    }
+  } catch {}
+  return []
+}
+
+function savePlayers(players: string[]) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(players))
+  } catch {}
+}
+
 interface GameState {
   players: string[]
   scores: number[]
   turn: number
   currentGame: GameType | null
+  _hydrated: boolean
+
+  // Hydration
+  hydrate: () => void
 
   // Player management
   addPlayer: () => void
@@ -31,12 +55,25 @@ export const useGameStore = create<GameState>((set, get) => ({
   scores: [],
   turn: 0,
   currentGame: null,
+  _hydrated: false,
+
+  hydrate: () => {
+    if (get()._hydrated) return
+    const saved = loadPlayers()
+    if (saved.length > 0) {
+      set({ players: saved, scores: saved.map(() => 0), _hydrated: true })
+    } else {
+      set({ _hydrated: true })
+    }
+  },
 
   addPlayer: () =>
     set((s) => {
       if (s.players.length >= 6) return s
+      const players = [...s.players, `플레이어${s.players.length + 1}`]
+      savePlayers(players)
       return {
-        players: [...s.players, `플레이어${s.players.length + 1}`],
+        players,
         scores: [...s.scores, 0],
       }
     }),
@@ -45,8 +82,10 @@ export const useGameStore = create<GameState>((set, get) => ({
     set((s) => {
       if (s.players.length >= 6) return s
       if (s.players.includes(name)) return s
+      const players = [...s.players, name]
+      savePlayers(players)
       return {
-        players: [...s.players, name],
+        players,
         scores: [...s.scores, 0],
       }
     }),
@@ -56,6 +95,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       if (s.players.length <= 0) return s
       const players = s.players.filter((_, i) => i !== index)
       const scores = s.scores.filter((_, i) => i !== index)
+      savePlayers(players)
       return {
         players,
         scores,
@@ -67,6 +107,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     set((s) => {
       const players = [...s.players]
       if (name.trim()) players[index] = name.trim()
+      savePlayers(players)
       return { players }
     }),
 
@@ -80,6 +121,7 @@ export const useGameStore = create<GameState>((set, get) => ({
       const scores = [...s.scores]
       ;[players[i], players[j]] = [players[j], players[i]]
       ;[scores[i], scores[j]] = [scores[j], scores[i]]
+      savePlayers(players)
       return { players, scores }
     }),
 
