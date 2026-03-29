@@ -1,13 +1,19 @@
-export type GameType = 'roulette' | 'croc' | 'bomb' | 'balloon' | 'mole'
+export type GameType =
+  | 'roulette'
+  | 'croc'
+  | 'bomb'
+  | 'balloon'
+  | 'mole'
+  | 'spin';
 
 export interface GameMeta {
-  id: GameType
-  emoji: string
-  name: string
-  desc: string
-  color: string       // text/accent color
-  shadow: string      // box-shadow color
-  path: string
+  id: GameType;
+  emoji: string;
+  name: string;
+  desc: string;
+  color: string; // text/accent color
+  shadow: string; // box-shadow color
+  path: string;
 }
 
 export const GAMES: GameMeta[] = [
@@ -19,6 +25,15 @@ export const GAMES: GameMeta[] = [
     color: '#ff6b9d',
     shadow: '#ffb3cc',
     path: '/game/roulette',
+  },
+  {
+    id: 'spin',
+    emoji: '👉',
+    name: '화살표 스핀',
+    desc: '화살표가 가리키면 당첨!',
+    color: '#e91e63',
+    shadow: '#f48fb1',
+    path: '/game/spin',
   },
   {
     id: 'croc',
@@ -56,4 +71,4 @@ export const GAMES: GameMeta[] = [
     shadow: '#c9b8ff',
     path: '/game/balloon',
   },
-]
+];

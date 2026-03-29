@@ -92,6 +92,10 @@ const config: Config = {
             transform: 'translate(var(--tx), var(--ty)) scale(0.3) rotate(var(--rot))',
           },
         },
+        arrowSpin: {
+          '0%': { transform: 'rotate(var(--spin-from))' },
+          '100%': { transform: 'rotate(var(--spin-to))' },
+        },
       },
       animation: {
         'float-y': 'floatY 2.5s ease-in-out infinite',
@@ -108,6 +112,7 @@ const config: Config = {
         'tooth-bite': 'toothBite 0.45s ease-out',
         'screen-shake': 'screenShake 0.5s ease-out',
         'particle-fly': 'particleFly 1.3s ease-out forwards',
+        'arrow-spin': 'arrowSpin var(--spin-duration) cubic-bezier(0.33, 1, 0.68, 1) forwards',
       },
     },
   },

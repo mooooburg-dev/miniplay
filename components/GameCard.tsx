@@ -10,7 +10,8 @@ interface GameCardProps {
 export function GameCard({ game }: GameCardProps) {
   const router = useRouter()
   const { players, setCurrentGame, resetTurn } = useGameStore()
-  const disabled = players.length < 2
+  const noPlayersNeeded = game.id === 'spin'
+  const disabled = !noPlayersNeeded && players.length < 2
 
   const handleClick = () => {
     if (disabled) return
