@@ -15,7 +15,7 @@ export const GAMES: GameMeta[] = [
     id: 'roulette',
     emoji: '🎡',
     name: '숫자 룰렛',
-    desc: '금지 숫자에 걸리면 벌칙!',
+    desc: '금지 숫자 or 숫자 미션!',
     color: '#ff6b9d',
     shadow: '#ffb3cc',
     path: '/game/roulette',
