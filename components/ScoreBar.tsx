@@ -36,7 +36,7 @@ export function ScoreBar({
       if (dragIdx === null) return
       const dx = Math.abs(e.touches[0].clientX - touchStartX.current)
       const dy = Math.abs(e.touches[0].clientY - touchStartY.current)
-      if (dx > 8 || dy > 8) isDragging.current = true
+      if (dx > 14 || dy > 14) isDragging.current = true
 
       // 현재 터치 위치에 해당하는 칩 찾기
       const touch = e.touches[0]

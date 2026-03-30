@@ -85,7 +85,7 @@ export function FeedbackButton() {
                   <h2 className="text-xl text-[#ff6b9d]">우리 가족 의견함 💌</h2>
                   <button
                     onClick={close}
-                    className="text-gray-600 text-xl leading-none"
+                    className="text-gray-600 text-xl leading-none p-2 -m-2"
                   >
                     ✕
                   </button>
