@@ -11,8 +11,10 @@
 
 | 게임 | 경로 | 설명 |
 | --- | --- | --- |
-| 🎰 숫자 룰렛 | `/game/roulette` | 돌아가는 룰렛, 누가 걸릴까? |
+| 🎡 숫자 룰렛 | `/game/roulette` | 돌아가는 룰렛, 누가 걸릴까? |
+| 👉 화살표 스핀 | `/game/spin` | 화살표가 가리키면 당첨! |
 | 🐊 악어 이빨 | `/game/croc` | 이빨을 하나씩 눌러라! |
+| 🐹 쏙쏙 햄찌 | `/game/mole` | 쏙쏙 올라오는 햄찌를 잡아라! |
 | 💣 째깍 폭탄 | `/game/bomb` | 폭탄이 터지기 전에! |
 | 🎈 풍선 팡 | `/game/balloon` | 풍선이 터질 때까지 펌프! |
 
@@ -52,36 +54,23 @@ http://localhost:3000 에서 확인할 수 있습니다.
 ```
 miniplay/
 ├── app/
-│   ├── layout.tsx          # 루트 레이아웃 (Jua 폰트, 메타데이터, 애널리틱스)
+│   ├── layout.tsx          # 루트 레이아웃
 │   ├── globals.css         # Tailwind base + 공통 스타일
-│   ├── manifest.ts         # PWA 매니페스트 설정
-│   ├── page.tsx            # 홈 허브 (게임 카드 목록)
-│   ├── icon.png            # 파비콘 (32x32)
-│   ├── apple-icon.png      # Apple Touch Icon (180x180)
-│   ├── api/feedback/       # 피드백 API 라우트
+│   ├── manifest.ts         # PWA 매니페스트
+│   ├── page.tsx            # 홈 허브
+│   ├── api/feedback/       # 피드백 API
 │   └── game/
-│       ├── roulette/page.tsx
-│       ├── croc/page.tsx
-│       ├── bomb/page.tsx
-│       └── balloon/page.tsx
-├── components/
-│   ├── GameCard.tsx        # 게임 선택 카드
-│   ├── PlayerSetup.tsx     # 플레이어 이름 설정
-│   ├── TurnBadge.tsx       # 현재 차례 표시
-│   ├── ScoreBar.tsx        # 플레이어별 점수
-│   ├── PenaltyOverlay.tsx  # 벌칙 오버레이
-│   ├── BgmToggle.tsx       # BGM 토글 버튼
-│   ├── FeedbackButton.tsx  # 피드백 제출 버튼
-│   └── InstallPrompt.tsx   # iOS PWA 설치 안내
-├── store/
-│   └── gameStore.ts        # Zustand 전역 상태
-├── hooks/
-│   ├── useAudio.ts         # Web Audio API 효과음 엔진
-│   └── useBgm.ts           # Web Audio API BGM 엔진
-├── lib/
-│   └── gtag.ts             # Google Analytics 연동
-└── types/
-    └── index.ts            # 타입 정의 + GAMES 메타 배열
+│       ├── roulette/       # 숫자 룰렛
+│       ├── spin/           # 화살표 스핀
+│       ├── croc/           # 악어 이빨
+│       ├── mole/           # 쏙쏙 햄찌
+│       ├── bomb/           # 째깍 폭탄
+│       └── balloon/        # 풍선 팡
+├── components/             # 공용 UI 컴포넌트
+├── store/                  # Zustand 전역 상태
+├── hooks/                  # 커스텀 훅 (useAudio, useBgm)
+├── lib/                    # 유틸리티 (Google Analytics)
+└── types/                  # 타입 정의 + GAMES 메타 배열
 ```
 
 ---
