@@ -75,8 +75,13 @@ export default function BombPage() {
       setShaking(true)
       setTimeout(() => setShaking(false), 500)
       setTimeout(() => {
-        addPenalty(useGameStore.getState().turn)
-        setPenaltyPlayer(useGameStore.getState().players[useGameStore.getState().turn])
+        const state = useGameStore.getState()
+        if (state.players.length > 0) {
+          addPenalty(state.turn)
+          setPenaltyPlayer(state.players[state.turn])
+        } else {
+          setPenaltyPlayer('💥')
+        }
       }, 900)
     }, total)
   }, [phase, playClick, playBombTick, playExplosion, addPenalty])
@@ -108,8 +113,12 @@ export default function BombPage() {
         </button>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-jua text-[#e67e22] mb-2">💣 째깍째깍 폭탄</h1>
-        <TurnBadge playerName={players[turn]} color="#e67e22" shadowColor="#ffd6a5" />
-        <ScoreBar players={players} scores={scores} currentTurn={turn} activeColor="#e67e22" />
+        {players.length > 0 && (
+          <>
+            <TurnBadge playerName={players[turn]} color="#e67e22" shadowColor="#ffd6a5" />
+            <ScoreBar players={players} scores={scores} currentTurn={turn} activeColor="#e67e22" />
+          </>
+        )}
 
         {/* 폭탄 이모지 */}
         <div
@@ -124,13 +133,15 @@ export default function BombPage() {
         </div>
 
         {/* 현재 보유자 */}
-        <div
-          className="bg-white rounded-2xl sm:rounded-3xl px-9 py-3.5 sm:px-12 sm:py-5 text-center min-w-[200px] sm:min-w-[260px] mb-4"
-          style={{ boxShadow: '0 6px 0 #ffd6a5' }}
-        >
-          <p className="text-xs sm:text-sm text-gray-300 font-jua mb-1">🤲 지금 들고 있는 사람</p>
-          <p className="text-3xl sm:text-4xl md:text-5xl text-[#e67e22] font-jua">{players[turn]}</p>
-        </div>
+        {players.length > 0 && (
+          <div
+            className="bg-white rounded-2xl sm:rounded-3xl px-9 py-3.5 sm:px-12 sm:py-5 text-center min-w-[200px] sm:min-w-[260px] mb-4"
+            style={{ boxShadow: '0 6px 0 #ffd6a5' }}
+          >
+            <p className="text-xs sm:text-sm text-gray-300 font-jua mb-1">🤲 지금 들고 있는 사람</p>
+            <p className="text-3xl sm:text-4xl md:text-5xl text-[#e67e22] font-jua">{players[turn]}</p>
+          </div>
+        )}
 
         {/* 퓨즈 바 */}
         <div className="w-full max-w-xs sm:max-w-sm md:max-w-md h-3.5 sm:h-4 bg-white/50 rounded-lg overflow-hidden mb-5">
@@ -153,7 +164,7 @@ export default function BombPage() {
             🔥 시작!
           </button>
         )}
-        {phase === 'ticking' && (
+        {phase === 'ticking' && players.length > 0 && (
           <button
             onClick={passBomb}
             className="relative px-11 py-4 sm:px-14 sm:py-5 text-2xl sm:text-3xl md:text-4xl font-jua text-white rounded-full action-btn active:translate-y-1.5 transition-transform"

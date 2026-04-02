@@ -155,6 +155,12 @@ export default function MolePage() {
 
   // 결과 처리: 다음 플레이어로 넘기거나 최종 결과
   const handleResultNext = useCallback(() => {
+    if (players.length === 0) {
+      // 솔로 모드: 바로 리셋
+      setPhase('ready')
+      return
+    }
+
     const newScores = [...roundScores, currentScore]
     setRoundScores(newScores)
 
@@ -199,13 +205,17 @@ export default function MolePage() {
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-jua text-[#e74c3c] mb-2">
           🐹 쏙쏙 햄찌
         </h1>
-        <TurnBadge playerName={players[currentPlayerIndex]} color="#e74c3c" shadowColor="#f5a5a5" />
-        <ScoreBar players={players} scores={scores} currentTurn={currentPlayerIndex} activeColor="#e74c3c" />
+        {players.length > 0 && (
+          <>
+            <TurnBadge playerName={players[currentPlayerIndex]} color="#e74c3c" shadowColor="#f5a5a5" />
+            <ScoreBar players={players} scores={scores} currentTurn={currentPlayerIndex} activeColor="#e74c3c" />
+          </>
+        )}
 
         {phase === 'ready' && (
           <div className="flex flex-col items-center gap-4 mt-6">
             <p className="text-lg sm:text-xl font-jua text-[#e74c3c]">
-              {players[currentPlayerIndex]}님 준비!
+              {players.length > 0 ? `${players[currentPlayerIndex]}님 준비!` : '준비!'}
             </p>
             <p className="text-sm sm:text-base text-gray-500 font-jua">
               {ROUND_TIME}초 안에 햄찌를 최대한 많이 잡으세요!
@@ -324,7 +334,7 @@ export default function MolePage() {
           <div className="flex flex-col items-center gap-4 mt-6">
             <div className="text-5xl sm:text-6xl animate-land-pop">🎯</div>
             <p className="text-xl sm:text-2xl font-jua text-[#e74c3c]">
-              {players[currentPlayerIndex]}님: {currentScore}마리!
+              {players.length > 0 ? `${players[currentPlayerIndex]}님: ` : ''}{currentScore}마리!
             </p>
             <button
               onClick={handleResultNext}
@@ -334,7 +344,7 @@ export default function MolePage() {
                 boxShadow: '0 4px 0 #962d22, 0 6px 16px rgba(231,76,60,0.3)',
               }}
             >
-              {currentPlayerIndex + 1 < players.length ? '다음 플레이어 →' : '결과 보기 🏆'}
+              {players.length === 0 ? '다시 하기 🔄' : currentPlayerIndex + 1 < players.length ? '다음 플레이어 →' : '결과 보기 🏆'}
             </button>
           </div>
         )}

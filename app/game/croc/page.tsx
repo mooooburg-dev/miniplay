@@ -43,21 +43,23 @@ export default function CrocPage() {
         setHint('앗! 물렸다! 😱 악어가 깨물었어요!')
         playDanger()
         setTimeout(() => {
-          addPenalty(turn)
-          setPenaltyPlayer(players[turn])
+          if (players.length > 0) addPenalty(turn)
+          setPenaltyPlayer(players[turn] ?? '누군가')
         }, 1200)
       } else {
         // 안전
         setTeeth((prev) => prev.map((t, idx) => (idx === i ? 'pulled' : t)))
         playSafe()
-        const next = (turn + 1) % players.length
         const safeLeft = teeth.filter((t, idx) => t === 'idle' && idx !== trapIndex).length - 1
         if (safeLeft === 0) {
           setHint('마지막 이빨이 남았어요... 🫣')
-        } else {
+        } else if (players.length > 0) {
+          const next = (turn + 1) % players.length
           setHint(`휴~ 안전! 다음은 ${players[next]} 차례 🌿`)
+        } else {
+          setHint('휴~ 안전! 🌿')
         }
-        nextTurn()
+        if (players.length > 0) nextTurn()
       }
     },
     [locked, teeth, trapIndex, turn, players, playSafe, playDanger, nextTurn, addPenalty],
@@ -85,8 +87,12 @@ export default function CrocPage() {
         </button>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-jua text-[#27ae60] mb-2">🐊 악어 이빨 뽑기</h1>
-        <TurnBadge playerName={players[turn]} color="#27ae60" shadowColor="#a8e6cf" />
-        <ScoreBar players={players} scores={scores} currentTurn={turn} activeColor="#27ae60" />
+        {players.length > 0 && (
+          <>
+            <TurnBadge playerName={players[turn]} color="#27ae60" shadowColor="#a8e6cf" />
+            <ScoreBar players={players} scores={scores} currentTurn={turn} activeColor="#27ae60" />
+          </>
+        )}
 
         {/* 악어 입 */}
         <div

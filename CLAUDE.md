@@ -27,12 +27,12 @@ npm run lint     # ESLint 검사
 | 경로 | 게임 | 참여자 필요 |
 | --- | --- | --- |
 | `/` | 홈 허브 | - |
-| `/game/roulette` | 숫자 룰렛 | O |
+| `/game/roulette` | 숫자 룰렛 | X (선택 시 턴/벌칙 활성화) |
 | `/game/spin` | 화살표 스핀 | X |
-| `/game/croc` | 악어 이빨 | O |
-| `/game/mole` | 쏙쏙 햄찌 | O |
-| `/game/bomb` | 째깍 폭탄 | O |
-| `/game/balloon` | 풍선 팡 | O |
+| `/game/croc` | 악어 이빨 | X (선택 시 턴/벌칙 활성화) |
+| `/game/mole` | 쏙쏙 햄찌 | X (선택 시 턴/벌칙 활성화) |
+| `/game/bomb` | 째깍 폭탄 | X (선택 시 턴/벌칙 활성화) |
+| `/game/balloon` | 풍선 팡 | X (선택 시 턴/벌칙 활성화) |
 
 ## 새 게임 추가 방법
 
@@ -40,7 +40,7 @@ npm run lint     # ESLint 검사
 2. `app/game/<id>/page.tsx` 생성 (`'use client'`)
 3. 홈 카드 자동 노출 + 라우팅 완료
 
-참여자가 필요 없는 게임은 `GameCard.tsx`의 `noPlayersNeeded` 조건에 `game.id`를 추가한다.
+모든 게임은 참여자 없이도 플레이 가능하며, 참여자가 있으면 턴/벌칙 시스템이 자동 활성화된다.
 
 ## 코드 규칙
 

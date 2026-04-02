@@ -77,11 +77,12 @@ export default function RoulettePage() {
         if (mode === 'forbidden') {
           const isLose = final === forbiddenNum
           if (isLose) {
-            setMsg(`💀 금지 숫자 ${forbiddenNum}! ${players[turn]} 벌칙!`)
+            const currentPlayer = players[turn] ?? '???'
+            setMsg(`💀 금지 숫자 ${forbiddenNum}! ${currentPlayer} 벌칙!`)
             playDanger()
             setTimeout(() => {
-              addPenalty(turn)
-              setPenaltyPlayer(players[turn])
+              if (players.length > 0) addPenalty(turn)
+              setPenaltyPlayer(currentPlayer)
             }, 1000)
           } else {
             setMsg(`${final}번! 안전~ 😊`)
@@ -90,12 +91,12 @@ export default function RoulettePage() {
               setPhase('idle')
               setLandedAnim(false)
               setMsg('버튼을 눌러봐! 🌟')
-              nextTurn()
+              if (players.length > 0) nextTurn()
             }, 1600)
           }
         } else {
           // 미션 모드
-          const resultText = `${players[turn]}! ${final}번 미션하기! 🎉`
+          const resultText = `${players[turn] ?? '???'}! ${final}번 미션하기! 🎉`
           setMsg(resultText)
           setMissionResult(resultText)
           playFanfare()
@@ -103,7 +104,7 @@ export default function RoulettePage() {
             setPhase('idle')
             setLandedAnim(false)
             setMsg('버튼을 눌러봐! 🌟')
-            nextTurn()
+            if (players.length > 0) nextTurn()
           }, 3000)
         }
       }
@@ -197,8 +198,12 @@ export default function RoulettePage() {
           🎡 숫자 룰렛
         </h1>
 
-        <TurnBadge playerName={players[turn]} color="#ff6b9d" shadowColor="#ffb3cc" />
-        <ScoreBar players={players} scores={scores} currentTurn={turn} activeColor="#ff6b9d" />
+        {players.length > 0 && (
+          <>
+            <TurnBadge playerName={players[turn]} color="#ff6b9d" shadowColor="#ffb3cc" />
+            <ScoreBar players={players} scores={scores} currentTurn={turn} activeColor="#ff6b9d" />
+          </>
+        )}
 
         {mode === 'forbidden' ? (
           /* 금지 숫자 모드 */

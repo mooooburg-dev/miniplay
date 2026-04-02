@@ -126,7 +126,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     }),
 
   nextTurn: () =>
-    set((s) => ({ turn: (s.turn + 1) % s.players.length })),
+    set((s) => ({ turn: s.players.length > 0 ? (s.turn + 1) % s.players.length : 0 })),
 
   resetTurn: () => set({ turn: 0 }),
 

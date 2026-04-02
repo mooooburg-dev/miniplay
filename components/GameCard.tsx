@@ -9,12 +9,9 @@ interface GameCardProps {
 
 export function GameCard({ game }: GameCardProps) {
   const router = useRouter()
-  const { players, setCurrentGame, resetTurn } = useGameStore()
-  const noPlayersNeeded = game.id === 'spin'
-  const disabled = !noPlayersNeeded && players.length < 2
+  const { setCurrentGame, resetTurn } = useGameStore()
 
   const handleClick = () => {
-    if (disabled) return
     setCurrentGame(game.id)
     resetTurn()
     router.push(game.path)
@@ -23,16 +20,9 @@ export function GameCard({ game }: GameCardProps) {
   return (
     <button
       onClick={handleClick}
-      disabled={disabled}
-      className={`glass-card p-5 sm:p-6 md:p-7 text-center transition-all duration-300 font-jua w-full group overflow-hidden relative ${
-        disabled
-          ? 'opacity-50 saturate-0'
-          : 'hover:-translate-y-1 hover:shadow-xl active:scale-95'
-      }`}
+      className="glass-card p-5 sm:p-6 md:p-7 text-center transition-all duration-300 font-jua w-full group overflow-hidden relative hover:-translate-y-1 hover:shadow-xl active:scale-95"
       style={{
-        boxShadow: disabled
-          ? 'none'
-          : `0 8px 20px ${game.color}30, inset 0 2px 4px rgba(255,255,255,0.7)`,
+        boxShadow: `0 8px 20px ${game.color}30, inset 0 2px 4px rgba(255,255,255,0.7)`,
         borderBottom: `4px solid ${game.color}20`,
       }}
     >

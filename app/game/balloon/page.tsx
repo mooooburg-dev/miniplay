@@ -52,11 +52,15 @@ export default function BalloonPage() {
       setPopped(true)
       playPop()
       setTimeout(() => {
-        addPenalty(turn)
-        setPenaltyPlayer(players[turn])
+        if (players.length > 0) {
+          addPenalty(turn)
+          setPenaltyPlayer(players[turn])
+        } else {
+          setPenaltyPlayer('💥')
+        }
       }, 1000)
     } else {
-      nextTurn()
+      if (players.length > 0) nextTurn()
     }
   }, [popped, pumps, popAt, turn, players, playPump, playPop, nextTurn, addPenalty])
 
@@ -78,8 +82,12 @@ export default function BalloonPage() {
         </button>
 
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-jua text-[#7b61ff] mb-2">🎈 풍선 팡</h1>
-        <TurnBadge playerName={players[turn]} color="#7b61ff" shadowColor="#c9b8ff" />
-        <ScoreBar players={players} scores={scores} currentTurn={turn} activeColor="#7b61ff" />
+        {players.length > 0 && (
+          <>
+            <TurnBadge playerName={players[turn]} color="#7b61ff" shadowColor="#c9b8ff" />
+            <ScoreBar players={players} scores={scores} currentTurn={turn} activeColor="#7b61ff" />
+          </>
+        )}
 
         {/* 풍선 스테이지 */}
         <div className="relative h-[270px] sm:h-[380px] md:h-[440px] flex items-center justify-center w-full mb-2">
