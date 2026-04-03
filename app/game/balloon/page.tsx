@@ -1,5 +1,5 @@
 'use client'
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useGameStore } from '@/store/gameStore'
 import { useAudio } from '@/hooks/useAudio'
@@ -8,8 +8,9 @@ import { ScoreBar } from '@/components/ScoreBar'
 import { PenaltyOverlay } from '@/components/PenaltyOverlay'
 import { trackEvent } from '@/lib/gtag'
 
-const POP_MIN = 8
-const POP_MAX = 21
+const POP_MIN = 15
+const POP_MAX = 40
+const PUMP_INTERVAL = 150 // ms — 누르고 있을 때 펌프 간격
 
 export default function BalloonPage() {
   const router = useRouter()
@@ -20,9 +21,21 @@ export default function BalloonPage() {
   const [pumps, setPumps] = useState(0)
   const [popped, setPopped] = useState(false)
   const [penaltyPlayer, setPenaltyPlayer] = useState('')
+  const [pressing, setPressing] = useState(false)
+
+  const pumpsRef = useRef(pumps)
+  const popAtRef = useRef(popAt)
+  const poppedRef = useRef(popped)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const trackedRef = useRef(false)
+
+  // ref 동기화
+  useEffect(() => { pumpsRef.current = pumps }, [pumps])
+  useEffect(() => { popAtRef.current = popAt }, [popAt])
+  useEffect(() => { poppedRef.current = popped }, [popped])
 
   const ratio = popped ? 1 : pumps / popAt
-  const balloonSize = 5 + ratio * 9   // 5rem → 14rem (sm/md에서는 CSS scale로 추가 확대)
+  const balloonSize = 5 + ratio * 9
   const isWarning = ratio >= 0.6
   const isDanger = ratio >= 0.85
 
@@ -30,26 +43,30 @@ export default function BalloonPage() {
   if (ratio >= 0.75) dangerColor = '#e74c3c'
   else if (ratio >= 0.5) dangerColor = '#f1c40f'
 
-  let msgText = '버튼을 눌러 풍선을 부풀려요!'
+  let msgText = '버튼을 꾹 눌러 풍선을 부풀려요!'
   if (isDanger) msgText = '⚠️ 위험해요! 이제 곧 터질 것 같아요!!'
   else if (isWarning) msgText = '😬 조심조심... 점점 커지고 있어요!'
-  else if (pumps > 0) msgText = '💨 더 부풀려봐요!'
+  else if (pumps > 0 && !pressing) msgText = '다시 눌러서 더 부풀려봐요!'
+  else if (pressing) msgText = '💨 부풀고 있어요...!'
 
-  const trackedRef = useRef(false)
-
-  const pump = useCallback(() => {
-    if (popped) return
+  const doPump = useCallback(() => {
+    if (poppedRef.current) return
     if (!trackedRef.current) {
       trackEvent('game_start', { game_name: 'balloon' })
       trackedRef.current = true
     }
-    const next = pumps + 1
+    const next = pumpsRef.current + 1
     setPumps(next)
     playPump()
 
-    if (next >= popAt) {
+    if (next >= popAtRef.current) {
       // 펑!
       setPopped(true)
+      setPressing(false)
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
       playPop()
       setTimeout(() => {
         if (players.length > 0) {
@@ -59,16 +76,45 @@ export default function BalloonPage() {
           setPenaltyPlayer('💥')
         }
       }, 1000)
-    } else {
-      if (players.length > 0) nextTurn()
     }
-  }, [popped, pumps, popAt, turn, players, playPump, playPop, nextTurn, addPenalty])
+  }, [players, turn, playPump, playPop, addPenalty])
+
+  const handlePressStart = useCallback(() => {
+    if (poppedRef.current) return
+    setPressing(true)
+    doPump() // 즉시 첫 펌프
+    intervalRef.current = setInterval(doPump, PUMP_INTERVAL)
+  }, [doPump])
+
+  const handlePressEnd = useCallback(() => {
+    setPressing(false)
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+    // 참여자가 있으면 떼는 순간 턴 넘김
+    if (!poppedRef.current && players.length > 0 && pumpsRef.current > 0) {
+      nextTurn()
+    }
+  }, [players, nextTurn])
+
+  // 컴포넌트 언마운트 시 interval 정리
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [])
 
   const reset = useCallback(() => {
     setPopAt(POP_MIN + Math.floor(Math.random() * (POP_MAX - POP_MIN + 1)))
     setPumps(0)
     setPopped(false)
     setPenaltyPlayer('')
+    setPressing(false)
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
   }, [])
 
   return (
@@ -128,15 +174,20 @@ export default function BalloonPage() {
 
         {/* 버튼 */}
         <button
-          onClick={pump}
+          onPointerDown={handlePressStart}
+          onPointerUp={handlePressEnd}
+          onPointerLeave={handlePressEnd}
+          onContextMenu={(e) => e.preventDefault()}
           disabled={popped}
-          className="text-3xl sm:text-4xl md:text-5xl font-jua text-white px-12 py-4 sm:px-14 sm:py-5 rounded-full disabled:opacity-50 active:translate-y-1.5 transition-transform"
+          className={`text-3xl sm:text-4xl md:text-5xl font-jua text-white px-12 py-4 sm:px-14 sm:py-5 rounded-full disabled:opacity-50 transition-transform select-none touch-none ${pressing ? 'translate-y-1.5' : ''}`}
           style={{
-            background: 'linear-gradient(145deg, #7b61ff, #9b85ff)',
-            boxShadow: '0 8px 0 #5a47cc',
+            background: pressing
+              ? 'linear-gradient(145deg, #6a50ee, #8a74ee)'
+              : 'linear-gradient(145deg, #7b61ff, #9b85ff)',
+            boxShadow: pressing ? '0 4px 0 #5a47cc' : '0 8px 0 #5a47cc',
           }}
         >
-          💨 팡팡!
+          💨 꾹!
         </button>
       </div>
 
