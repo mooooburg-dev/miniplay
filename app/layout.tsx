@@ -4,6 +4,7 @@ import { Jua } from 'next/font/google'
 import { GA_ID } from '@/lib/gtag'
 import { BgmToggle } from '@/components/BgmToggle'
 import { NotificationToggle } from '@/components/NotificationToggle'
+import { PwaTracker } from '@/components/PwaTracker'
 import './globals.css'
 
 const jua = Jua({
@@ -56,6 +57,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body className="font-jua" suppressHydrationWarning>
+        <PwaTracker />
         <NotificationToggle />
         <BgmToggle />
         {children}
