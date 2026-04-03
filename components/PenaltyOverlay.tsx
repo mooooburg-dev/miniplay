@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { KakaoShareButton } from '@/components/KakaoShareButton'
 
 const EMOJIS = ['😱', '😭', '🙈', '🤦', '💀', '😰', '🙀', '😬', '🤯', '🥴']
 const PARTICLES = ['⭐', '🌟', '💫', '🎉', '🎊', '🍭', '🌈', '🦄', '🐥', '🍀', '🌸', '🎈']
@@ -91,7 +92,7 @@ export function PenaltyOverlay({ isOpen, loserName, onRetry }: PenaltyOverlayPro
           {loserName}
         </p>
         <p className="text-white font-jua text-2xl sm:text-3xl md:text-4xl mb-8">이(가) 걸렸다! 🎊</p>
-        <div className="flex gap-3 sm:gap-4 justify-center">
+        <div className="flex flex-wrap gap-3 sm:gap-4 justify-center">
           <button
             onClick={onRetry}
             className="px-7 py-3 sm:px-9 sm:py-4 rounded-full bg-white text-[#ff6b9d] font-jua text-lg sm:text-xl md:text-2xl shadow-md active:translate-y-1 transition-transform"
@@ -104,6 +105,7 @@ export function PenaltyOverlay({ isOpen, loserName, onRetry }: PenaltyOverlayPro
           >
             🏠 홈으로
           </button>
+          <KakaoShareButton variant="penalty" loserName={loserName} />
         </div>
       </div>
     </div>
