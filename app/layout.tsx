@@ -5,6 +5,8 @@ import { GA_ID } from '@/lib/gtag'
 import { BgmToggle } from '@/components/BgmToggle'
 import { NotificationToggle } from '@/components/NotificationToggle'
 import { PwaTracker } from '@/components/PwaTracker'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 
 const jua = Jua({
@@ -61,6 +63,8 @@ export default function RootLayout({
         <NotificationToggle />
         <BgmToggle />
         {children}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   )
