@@ -4,7 +4,8 @@ export type GameType =
   | 'bomb'
   | 'balloon'
   | 'mole'
-  | 'spin';
+  | 'spin'
+  | 'ladder';
 
 export interface GameMeta {
   id: GameType;
@@ -70,5 +71,14 @@ export const GAMES: GameMeta[] = [
     color: '#7b61ff',
     shadow: '#c9b8ff',
     path: '/game/balloon',
+  },
+  {
+    id: 'ladder',
+    emoji: '🪜',
+    name: '사다리 게임',
+    desc: '사다리를 만들고 운명을 결정!',
+    color: '#f59e0b',
+    shadow: '#fcd34d',
+    path: '/game/ladder',
   },
 ];
