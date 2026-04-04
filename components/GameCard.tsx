@@ -26,6 +26,12 @@ export function GameCard({ game }: GameCardProps) {
         borderBottom: `4px solid ${game.color}20`,
       }}
     >
+      {/* NEW 뱃지 */}
+      {game.isNew && (
+        <span className="absolute top-2 right-2 z-20 bg-red-500 text-white text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full leading-none shadow-md animate-pulse">
+          N
+        </span>
+      )}
       {/* Decorative gradient blob inside card */}
       <div
         className="absolute -inset-6 opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-2xl rounded-full z-0"

@@ -15,9 +15,20 @@ export interface GameMeta {
   color: string; // text/accent color
   shadow: string; // box-shadow color
   path: string;
+  isNew?: boolean;
 }
 
 export const GAMES: GameMeta[] = [
+  {
+    id: 'ladder',
+    emoji: '🪜',
+    name: '사다리 게임',
+    desc: '사다리를 만들고 운명을 결정!',
+    color: '#f59e0b',
+    shadow: '#fcd34d',
+    path: '/game/ladder',
+    isNew: true,
+  },
   {
     id: 'roulette',
     emoji: '🎡',
@@ -71,14 +82,5 @@ export const GAMES: GameMeta[] = [
     color: '#7b61ff',
     shadow: '#c9b8ff',
     path: '/game/balloon',
-  },
-  {
-    id: 'ladder',
-    emoji: '🪜',
-    name: '사다리 게임',
-    desc: '사다리를 만들고 운명을 결정!',
-    color: '#f59e0b',
-    shadow: '#fcd34d',
-    path: '/game/ladder',
   },
 ];
