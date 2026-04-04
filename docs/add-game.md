@@ -8,7 +8,7 @@
 
 ```typescript
 // GameType 유니온에 추가
-export type GameType = 'roulette' | 'croc' | 'bomb' | 'balloon' | 'mole' | 'spin' | 'newgame';
+export type GameType = 'roulette' | 'croc' | 'bomb' | 'balloon' | 'mole' | 'spin' | 'ladder' | 'newgame';
 
 // GAMES 배열에 추가
 export const GAMES: GameMeta[] = [
@@ -18,9 +18,10 @@ export const GAMES: GameMeta[] = [
     emoji: '🎯',
     name: '새 게임',
     desc: '게임 설명',
-    color: 'from-blue-400 to-cyan-400',
-    shadow: 'shadow-blue-400/40',
+    color: '#3b82f6',
+    shadow: '#93c5fd',
     path: '/game/newgame',
+    isNew: true,  // 신규 게임 N 뱃지 표시 (출시 후 제거)
   },
 ];
 ```

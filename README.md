@@ -12,6 +12,7 @@
 
 | 게임 | 경로 | 설명 |
 | --- | --- | --- |
+| 🪜 사다리 게임 | `/game/ladder` | 사다리를 만들고 운명을 결정! (**NEW**) |
 | 🎡 숫자 룰렛 | `/game/roulette` | 금지 숫자 / 미션 모드, 돌아가는 룰렛 |
 | 👉 화살표 스핀 | `/game/spin` | 화살표가 가리키면 당첨! |
 | 🐊 악어 이빨 | `/game/croc` | 12개 이빨 중 함정 하나를 피해라 |
@@ -76,7 +77,8 @@ miniplay/
 │       ├── croc/           # 악어 이빨
 │       ├── mole/           # 쏙쏙 햄찌
 │       ├── bomb/           # 째깍 폭탄
-│       └── balloon/        # 풍선 팡
+│       ├── balloon/        # 풍선 팡
+│       └── ladder/         # 사다리 게임
 ├── components/             # 공용 UI 컴포넌트
 ├── store/                  # Zustand 전역 상태 (gameStore)
 ├── hooks/                  # useAudio, useBgm

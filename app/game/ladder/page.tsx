@@ -264,7 +264,7 @@ export default function LadderPage() {
   const isEditing = phase === 'edit'
 
   return (
-    <div className="game-screen">
+    <div className="game-screen !min-h-0 h-[100dvh] !py-2 sm:!py-3 overflow-hidden">
       <button
         onClick={() => router.push('/')}
         className="fixed top-4 left-4 z-50 bg-white/70 backdrop-blur-md border border-white/80 rounded-full px-4 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-base text-gray-400 font-jua shadow-[0_4px_16px_rgba(0,0,0,0.08)] active:scale-90 transition-all hover:bg-white/90"
@@ -272,13 +272,13 @@ export default function LadderPage() {
         &larr; 홈으로
       </button>
 
-      <h1 className="text-3xl sm:text-4xl md:text-5xl font-jua text-[#f59e0b] mb-2">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-jua text-[#f59e0b] mb-1 sm:mb-2">
         🪜 사다리 게임
       </h1>
 
       {/* 인원 수 조절 (편집 모드에서만) */}
       {isEditing && (
-        <div className="flex items-center gap-3 mb-3">
+        <div className="flex items-center gap-3 mb-1 sm:mb-2">
           <button
             onClick={() => changePlayerCount(-1)}
             disabled={playerCount <= MIN_PLAYERS}
@@ -297,9 +297,9 @@ export default function LadderPage() {
         </div>
       )}
 
-      <div className="w-full max-w-lg space-y-2">
+      <div className="w-full max-w-lg space-y-1 sm:space-y-2 flex-1 flex flex-col min-h-0">
         {/* 상단 이름 */}
-        <div className="flex justify-around px-1">
+        <div className="flex justify-around px-1 shrink-0">
           {Array.from({ length: playerCount }, (_, i) => {
             const isFinished = finishedRunners.has(i)
             const isActive =
@@ -352,7 +352,7 @@ export default function LadderPage() {
         </div>
 
         {/* 사다리 본체 */}
-        <div className="relative w-full aspect-[3/4] bg-white/40 backdrop-blur-sm rounded-2xl border border-white/60 overflow-hidden">
+        <div className="relative w-full flex-1 min-h-0 bg-white/40 backdrop-blur-sm rounded-2xl border border-white/60 overflow-hidden">
           <svg
             viewBox="0 0 100 100"
             className="w-full h-full"
@@ -511,7 +511,7 @@ export default function LadderPage() {
         </div>
 
         {/* 하단 결과 */}
-        <div className="flex justify-around px-1">
+        <div className="flex justify-around px-1 shrink-0">
           {Array.from({ length: playerCount }, (_, i) => {
             const revealed = revealedResults[i]
             let arrivedColor = '#9ca3af'
@@ -573,7 +573,7 @@ export default function LadderPage() {
         </div>
 
         {/* 버튼 영역 */}
-        <div className="flex flex-wrap gap-2 justify-center pt-2">
+        <div className="flex flex-wrap gap-2 justify-center pt-1 sm:pt-2 shrink-0">
           {isEditing && (
             <>
               <button

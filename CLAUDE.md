@@ -36,12 +36,13 @@ npm run lint     # ESLint 검사
 | `/game/mole` | 쏙쏙 햄찌 | X (선택 시 턴/벌칙 활성화) |
 | `/game/bomb` | 째깍 폭탄 | X (선택 시 턴/벌칙 활성화) |
 | `/game/balloon` | 풍선 팡 | X (선택 시 턴/벌칙 활성화) |
+| `/game/ladder` | 사다리 게임 | X (자체 참여자 설정, 스토어 플레이어 자동 반영) |
 
 ## 새 게임 추가 방법
 
-1. `types/index.ts`의 `GameType` 유니온과 `GAMES` 배열에 추가
+1. `types/index.ts`의 `GameType` 유니온과 `GAMES` 배열에 추가 (새 게임은 `isNew: true` 설정)
 2. `app/game/<id>/page.tsx` 생성 (`'use client'`)
-3. 홈 카드 자동 노출 + 라우팅 완료
+3. 홈 카드 자동 노출 + 라우팅 완료 (`isNew: true`이면 N 뱃지 표시)
 
 모든 게임은 참여자 없이도 플레이 가능하며, 참여자가 있으면 턴/벌칙 시스템이 자동 활성화된다.
 자세한 가이드: `docs/add-game.md`
@@ -54,7 +55,7 @@ app/
 ├── page.tsx                # 홈 허브 (Server Component)
 ├── api/feedback/           # 피드백 → GitHub Issue 자동 생성
 ├── api/push/               # subscribe / unsubscribe / send
-└── game/*/page.tsx         # 각 게임 (모두 'use client')
+└── game/*/page.tsx         # 각 게임 (모두 'use client', ladder 포함)
 
 components/
 ├── BgmToggle.tsx           # BGM 토글 버튼
