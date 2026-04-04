@@ -61,17 +61,18 @@ async function shareViaKakao(options: ShareOptions): Promise<boolean> {
   }
 }
 
-async function shareViaWebShare(options: ShareOptions): Promise<boolean> {
-  if (!navigator.share) return false
+async function shareViaWebShare(options: ShareOptions): Promise<'ok' | 'cancel' | 'fail'> {
+  if (!navigator.share) return 'fail'
   try {
     await navigator.share({
       title: options.title,
       text: options.description,
       url: options.url || SITE_URL,
     })
-    return true
-  } catch {
-    return false
+    return 'ok'
+  } catch (e) {
+    if (e instanceof DOMException && e.name === 'AbortError') return 'cancel'
+    return 'fail'
   }
 }
 
@@ -90,11 +91,13 @@ export async function share(options: ShareOptions): Promise<void> {
   const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent)
 
   if (isMobile) {
-    if (await shareViaWebShare(options)) return
+    const webResult = await shareViaWebShare(options)
+    if (webResult === 'ok' || webResult === 'cancel') return
     if (await shareViaKakao(options)) return
   } else {
     if (await shareViaKakao(options)) return
-    if (await shareViaWebShare(options)) return
+    const webResult = await shareViaWebShare(options)
+    if (webResult === 'ok' || webResult === 'cancel') return
   }
 
   await shareViaClipboard(options)
