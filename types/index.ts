@@ -38,7 +38,6 @@ export const GAMES: GameMeta[] = [
     color: '#f59e0b',
     shadow: '#fcd34d',
     path: '/game/ladder',
-    isNew: true,
   },
   {
     id: 'roulette',
