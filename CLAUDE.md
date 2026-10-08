@@ -10,7 +10,7 @@
 
 - Next.js 15 (App Router) + TypeScript (strict) + Tailwind CSS v3
 - 상태 관리: Zustand v5 (`store/gameStore.ts`)
-- 오디오: Web Audio API 기반 (외부 파일/라이브러리 없음)
+- 오디오: Web Audio API 기반 (외부 파일/라이브러리 없음, BGM 합성은 Web Worker)
 - 폰트: Jua (Google Fonts, `next/font`)
 - PWA: `@ducanh2912/next-pwa` + 커스텀 Service Worker (`worker/index.js`)
 - 푸시 알림: `web-push` + Redis (`lib/push-subscriptions.ts`)
@@ -79,13 +79,15 @@ components/
 
 hooks/
 ├── useAudio.ts             # 효과음 (Web Audio API 합성)
-├── useBgm.ts               # BGM 생성 + Zustand 토글 상태
+├── useBgm.ts               # BGM 엔진 (랜덤 곡, 화면 전환 시 크로스페이드) + Zustand 토글 상태
 └── useSpeechRecognition.ts # 1회 음성 인식 (ko-KR, iOS Safari 대응)
 
 store/
 └── gameStore.ts            # 전역 상태 (플레이어, 점수, 턴)
 
 lib/
+├── bgm-synth.ts            # BGM 합성기 (곡 데이터 → 스테레오 PCM, Worker에서도 실행)
+├── bgm-tracks.ts           # BGM 곡 10개 데이터 (멜로디·코드·악기·드럼)
 ├── flags.ts                # 국기 퀴즈 데이터 (레벨별 나라, 별칭, matchCountry)
 ├── gtag.ts                 # GA4 이벤트 + PWA 트래킹
 ├── kakao.ts                # 카카오 SDK 로드 + 공유
@@ -101,6 +103,9 @@ types/
 
 worker/
 └── index.js                # Service Worker (푸시 수신/클릭)
+
+workers/
+└── bgm.worker.ts           # BGM 렌더링 Web Worker (Service Worker와 별개)
 
 scripts/
 ├── generate-icons.mjs      # PWA 아이콘 생성
@@ -123,7 +128,8 @@ public/
 
 ### 사운드
 - 효과음: `useAudio` 훅 (`playClick`, `playDanger`, `playFanfare`, `playPump`, `playPop`, `playExplosion` 등)
-- BGM: `useBgm` 훅 + `BgmToggle` 컴포넌트 (160BPM, C 메이저, 8마디 루프)
+- BGM: `useBgm` 훅 + `BgmToggle` 컴포넌트 — 곡 10개 중 랜덤 재생, 경로 변경 시 1.6초 크로스페이드
+- BGM 곡 추가/수정: `lib/bgm-tracks.ts` (표기법은 `docs/sound-system.md`)
 - AudioContext는 사용자 인터랙션 시점에 lazy 초기화 (브라우저 정책 대응)
 
 ### 스타일링

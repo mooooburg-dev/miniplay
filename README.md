@@ -32,7 +32,7 @@
 - **Styling**: Tailwind CSS v3
 - **State**: Zustand v5
 - **Font**: Jua (Google Fonts)
-- **Audio**: Web Audio API (외부 파일 없이 코드로 합성)
+- **Audio**: Web Audio API (외부 파일 없이 코드로 합성, BGM 10곡 랜덤 + 화면 전환 크로스페이드)
 - **PWA**: @ducanh2912/next-pwa + 커스텀 Service Worker
 - **Push**: web-push + Redis (구독 저장)
 - **Analytics**: Google Analytics 4, Vercel Analytics / Speed Insights
@@ -89,6 +89,7 @@ miniplay/
 ├── hooks/                  # useAudio, useBgm, useSpeechRecognition
 ├── lib/                    # GA, 카카오, 국기 데이터, 푸시 클라이언트/서버 유틸
 ├── worker/                 # Service Worker (푸시 알림)
+├── workers/                # Web Worker (BGM 합성)
 ├── scripts/                # PWA 아이콘 생성, 국기 SVG 복사 스크립트
 ├── types/                  # 타입 정의 + GAMES 메타 배열
 └── docs/                   # 프로젝트 문서

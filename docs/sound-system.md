@@ -39,24 +39,70 @@ const { playClick, playDanger, playFanfare } = useAudio();
 
 ## BGM (useBgm)
 
-`hooks/useBgm.ts`에서 제공하는 BGM 시스템입니다.
+`hooks/useBgm.ts`의 BGM 엔진과 `lib/bgm-tracks.ts`(곡 데이터), `lib/bgm-synth.ts`(합성기)로 구성됩니다.
 
-### 구성
+### 동작
 
-- **BPM**: 160
-- **키**: C 메이저
-- **구조**: 8마디 루프
-- **파트**: 멜로디 + 아르페지오 + 펑키 베이스 + 드럼 (킥/스네어/하이햇/셰이커)
+- 곡 10개 중 하나를 **랜덤 재생**합니다 (8마디 루프).
+- 화면(경로)이 바뀌면 다른 곡으로 **크로스페이드(1.6초)** 전환합니다. `BgmToggle`이 루트 레이아웃에 있어 `usePathname()` 변화를 감지합니다.
+- 켜기/끄기는 0.5초 페이드, 첫 재생은 1초 페이드인입니다.
+- 곡 합성은 **Web Worker**(`workers/bgm.worker.ts`)에서 처리해 화면이 멈추지 않습니다. Worker를 쓸 수 없으면 메인 스레드에서 합성합니다.
+- 다음 곡은 미리 정해 렌더링해 두므로 전환 시 지연이 없습니다.
+- 곡 하나가 수 MB라서 **현재 곡과 다음 곡 버퍼만** 메모리에 유지합니다.
+- 비동기 렌더링 중 새 요청(전환·끄기)이 오면 세대 번호로 이전 결과를 버려 곡이 겹치지 않습니다.
+- 페이드인 도중 전환되면 현재 음량에서 이어서 페이드아웃합니다 (`cancelAndHoldAtTime`, 미지원 브라우저는 직접 계산).
+- Worker가 4초 안에 응답하지 않으면 메인 스레드에서 합성합니다.
+
+### 곡 목록
+
+| 곡 | BPM | 조성 | 리드 | 드럼 |
+| --- | --- | --- | --- | --- |
+| 두근두근 팝 (기존 BGM) | 160 | C 장조 | chip | pop |
+| 장난감 행진 | 128 | F 장조 | square | march |
+| 통통 셔플 | 112 (스윙) | G 장조 | triangle | shuffle |
+| 해변 보사노바 | 118 | D 장조 | marimba | bossa |
+| 8비트 모험 | 150 | A 단조 | pulse | chip |
+| 살금살금 탐정 | 100 | D 단조 | pluck | sneaky |
+| 달려라 레이스 | 172 | E 장조 | saw | driving |
+| 꿈나라 오르골 | 92 | B♭ 장조 | musicbox | light |
+| 정글 탐험 | 120 | G 믹솔리디안 | marimba | tribal |
+| 신나는 디스코 | 124 | A 장조 | square | disco |
+
+### 곡 추가하기
+
+`lib/bgm-tracks.ts`의 `BGM_TRACKS`에 항목을 추가합니다.
+
+```typescript
+{
+  name: '새 곡',
+  bpm: 120,
+  tonic: 60,          // 멜로디 0도의 MIDI 번호 (60 = C4)
+  scale: MAJOR,       // MAJOR | MINOR | MIXOLYDIAN
+  // 8분음표 단위, 마디(|)당 8칸. 숫자 = 음계 도수, `.` = 쉼표, `-` = 앞 음 연장
+  melody: '0 2 4 2 0 . 4 . | ...',  // 8마디
+  chords: '0 0 3 3 4 4 0 0 ...',    // 반 마디마다 코드 근음 도수 (16개)
+  lead: 'square',     // chip | square | pulse | triangle | saw | marimba | pluck | musicbox
+  bass: 'octave',     // octave | root8 | walk | bounce | bossa | pump
+  chord: 'stab',      // pingpong | up16 | updown | stab | offbeat | pad | none
+  drums: 'pop',       // pop | march | shuffle | bossa | chip | sneaky | driving | light | tribal | disco
+  swing: 0,           // 선택: 0~0.35
+  echo: 0,            // 선택: 0~0.4
+}
+```
+
+- 멜로디 강박(각 마디 1·3박)에는 해당 코드의 구성음(근음 기준 0·2·4도)을 두면 자연스럽습니다.
+- 음량은 렌더링 후 RMS 기준으로 자동 정규화됩니다.
 
 ### 상태 관리
 
 ```typescript
 import { useBgmStore } from '@/hooks/useBgm';
 
-const { playing, toggle } = useBgmStore();
+const { playing, trackName, toggle } = useBgmStore();
 ```
 
 - `playing` — 현재 재생 상태 (boolean)
+- `trackName` — 재생 중인 곡 이름 (BGM 버튼 툴팁에 표시)
 - `toggle()` — 재생/정지 토글
 - `setPlaying(bool)` — 직접 제어
 
@@ -69,5 +115,7 @@ const { playing, toggle } = useBgmStore();
 모든 브라우저는 사용자 인터랙션 없이는 오디오 재생을 차단합니다.
 
 - `AudioContext`는 첫 사용자 클릭/터치 시점에 lazy 생성
-- `useBgm`은 첫 인터랙션에서 `AudioContext`를 unlock한 후 재생 시작
-- `resume()` 호출로 suspended 상태 복구 처리
+- `useBgm`은 첫 인터랙션에서 `AudioContext`를 만들고 곡을 합성·재생 (그 전에는 합성하지 않아 초기 로딩에 영향 없음)
+- 모바일 터치는 `touchend`/`click`만 사용자 활성화로 인정되므로, 제스처 리스너(pointerdown/pointerup/touchstart/touchend/click/keydown)를 계속 유지하며 멈춘 `AudioContext`를 `resume()`한다
+- 같은 리스너로 iOS의 전화·다른 앱 오디오·음성 인식 등으로 중단된 `AudioContext`도 다음 터치 때 복구
+- 탭이 숨겨지면 `suspend()`, 다시 보이면 `resume()` (모바일 배터리 절약)
