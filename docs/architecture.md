@@ -11,7 +11,7 @@ miniplay는 Next.js 15 App Router 기반의 PWA 앱으로, 가족이 함께 즐�
 │  Next.js 15 App Router                          │
 │  ┌───────────┐  ┌────────────────────────────┐  │
 │  │ 홈 (SSR)   │  │ 게임 페이지 (CSR, 'use client') │  │
-│  │ page.tsx   │  │ game/*/page.tsx (7개 게임)    │  │
+│  │ page.tsx   │  │ game/*/page.tsx (8개 게임)    │  │
 │  └───────────┘  └────────────────────────────┘  │
 │         │                    │                   │
 │         ▼                    ▼                   │
