@@ -57,6 +57,9 @@ npm run build
 
 # ESLint 검사
 npm run lint
+
+# 배포 후 검색엔진 색인 요청 (IndexNow: 네이버 + Bing 등)
+npm run indexnow
 ```
 
 http://localhost:3000 에서 확인할 수 있습니다.

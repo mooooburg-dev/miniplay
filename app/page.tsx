@@ -3,6 +3,8 @@ import { PlayerSetup } from '@/components/PlayerSetup'
 import { FeedbackButton } from '@/components/FeedbackButton'
 import { KakaoShareButton } from '@/components/KakaoShareButton'
 import { InstallPrompt } from '@/components/InstallPrompt'
+import { HomeAbout, HOME_FAQ } from '@/components/HomeAbout'
+import { FamilySiteBanner } from '@/components/FamilySiteBanner'
 import { GAMES } from '@/types'
 
 const jsonLd = {
@@ -42,12 +44,20 @@ const jsonLd = {
       browserRequirements: 'Requires JavaScript. Requires HTML5.',
       inLanguage: 'ko',
     },
+    {
+      '@type': 'FAQPage',
+      mainEntity: HOME_FAQ.map(({ q, a }) => ({
+        '@type': 'Question',
+        name: q,
+        acceptedAnswer: { '@type': 'Answer', text: a },
+      })),
+    },
   ],
 }
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen flex flex-col items-center px-4 pt-8 pb-12 sm:px-8 md:px-12 lg:px-16">
+    <main className="min-h-screen flex flex-col items-center px-4 pt-8 pb-40 sm:px-8 md:px-12 lg:px-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -72,6 +82,10 @@ export default function HomePage() {
           <GameCard key={game.id} game={game} />
         ))}
       </div>
+      {/* 사이트 소개·추천·FAQ (SEO 본문) */}
+      <HomeAbout />
+      {/* 패밀리 사이트: 골드박스 투데이 */}
+      <FamilySiteBanner />
       {/* 공유하기 플로팅 버튼 */}
       <KakaoShareButton variant="home" />
       {/* 의견함 플로팅 버튼 */}

@@ -48,6 +48,11 @@ export const metadata: Metadata = {
     '사다리타기',
     '국기퀴즈',
     '국기맞히기',
+    '벌칙 정하기',
+    '순서 정하기',
+    '복불복 게임',
+    '두더지 잡기',
+    '명절 가족 게임',
     'miniplay',
   ],
   openGraph: {

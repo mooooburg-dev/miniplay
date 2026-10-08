@@ -46,9 +46,11 @@ npm run lint     # ESLint 검사
 
 1. `types/index.ts`의 `GameType` 유니온과 `GAMES` 배열에 추가 (새 게임은 `isNew: true` 설정)
 2. `app/game/<id>/page.tsx` 생성 (`'use client'`)
-3. `app/game/<id>/layout.tsx` 생성 (게임별 SEO `metadata`)
-4. `public/llms.txt`, `app/layout.tsx`의 description/keywords에 게임 추가
-5. 홈 카드, 라우팅, sitemap 자동 반영 (`isNew: true`이면 N 뱃지 표시)
+3. `lib/game-seo.ts`의 `GAME_SEO`에 SEO 데이터 추가 (제목·설명·키워드·소개·게임 방법·FAQ — 실제 규칙과 일치해야 함)
+4. `app/game/<id>/layout.tsx` 생성 (`gameMetadata('<id>')` + `<GameGuide id="<id>" />` — 기존 게임 layout 복사)
+5. `public/llms.txt`, `app/layout.tsx`의 description/keywords에 게임 추가
+6. 홈 카드, 라우팅, sitemap, OG 이미지(`/og/<id>`) 자동 반영 (`isNew: true`이면 N 뱃지 표시)
+7. 배포 후 `npm run indexnow`로 검색엔진에 색인 요청
 
 모든 게임은 참여자 없이도 플레이 가능하며, 참여자가 있으면 턴/벌칙 시스템이 자동 활성화된다.
 자세한 가이드: `docs/add-game.md`
@@ -62,12 +64,16 @@ app/
 ├── manifest.ts / robots.ts / sitemap.ts  # PWA 매니페스트, SEO (sitemap은 GAMES 기반 자동 생성)
 ├── api/feedback/           # 피드백 → GitHub Issue 자동 생성
 ├── api/push/               # subscribe / unsubscribe / send
-└── game/*/                 # 각 게임: page.tsx ('use client') + layout.tsx (SEO metadata)
+├── og/[id]/route.tsx       # 게임별 OG 이미지 (1200×630, 빌드 시 정적 생성, Jua 폰트·twemoji)
+└── game/*/                 # 각 게임: page.tsx ('use client') + layout.tsx (gameMetadata + GameGuide)
 
 components/
 ├── BgmToggle.tsx           # BGM 토글 버튼
+├── FamilySiteBanner.tsx    # 홈 하단 골드박스 투데이 배너 (상호 링크, UTM)
 ├── FeedbackButton.tsx      # 피드백 모달 (→ GitHub Issue)
 ├── GameCard.tsx            # 홈 게임 카드
+├── GameGuide.tsx           # 게임 화면 아래 "게임 방법"·FAQ + JSON-LD (Server)
+├── HomeAbout.tsx           # 홈 하단 소개·상황별 추천·FAQ (Server)
 ├── InstallPrompt.tsx       # iOS PWA 설치 안내 배너
 ├── KakaoShareButton.tsx    # 카카오톡 공유 (홈 플로팅 / 벌칙 오버레이)
 ├── NotificationToggle.tsx  # 푸시 알림 토글
@@ -89,6 +95,7 @@ lib/
 ├── bgm-synth.ts            # BGM 합성기 (곡 데이터 → 스테레오 PCM, Worker에서도 실행)
 ├── bgm-tracks.ts           # BGM 곡 10개 데이터 (멜로디·코드·악기·드럼)
 ├── flags.ts                # 국기 퀴즈 데이터 (레벨별 나라, 별칭, matchCountry)
+├── game-seo.ts             # 게임별 SEO 단일 출처 (메타데이터·게임 방법·FAQ·JSON-LD)
 ├── gtag.ts                 # GA4 이벤트 + PWA 트래킹
 ├── kakao.ts                # 카카오 SDK 로드 + 공유
 ├── push-client.ts          # 클라이언트 푸시 구독/해제
@@ -109,10 +116,12 @@ workers/
 
 scripts/
 ├── generate-icons.mjs      # PWA 아이콘 생성
+├── indexnow.mjs            # IndexNow 색인 요청 (npm run indexnow — 운영 sitemap URL을 중앙·네이버 엔드포인트로 전송)
 └── copy-flags.mjs          # lib/flags.ts의 나라 국기 SVG를 public/flags/로 복사
 
 public/
 ├── flags/                  # 국기 SVG (flag-icons, MIT) — 커밋 대상
+├── <indexnow-key>.txt      # IndexNow 키 검증 파일 (scripts/indexnow.mjs의 KEY와 동일)
 └── llms.txt                # AI 검색용 사이트 설명 (게임 추가 시 갱신)
 
 .github/workflows/
@@ -134,12 +143,17 @@ public/
 
 ### 스타일링
 - 배경 그라디언트는 `globals.css`의 `body`에서 고정. 게임 페이지에서 변경 금지.
-- 게임 래퍼: `className="game-screen"` 사용
+- 게임 래퍼: `className="game-screen"` 사용 — 한 화면(100dvh) 고정 레이아웃 (아래 "모바일 터치·화면 고정" 참고)
 - 모든 텍스트에 `font-jua` 적용
 - 액션 버튼: `action-btn` 클래스로 상단 광택 효과
 - 인라인 스타일은 `box-shadow`, 동적 색상 등 Tailwind로 표현 불가한 경우만 허용
 - 커스텀 keyframe은 `tailwind.config.ts`의 `theme.extend`에 추가
 - 커스텀 색상: `pastel` 팔레트 (pink, rose, magenta, purple, blue, yellow)
+
+### SEO
+- 게임 페이지 메타데이터는 `gameMetadata()`로만 만든다 — 자식 layout에서 `openGraph`를 직접 쓰면 루트의 og:image가 사라진다
+- 게임 규칙을 바꾸면 `lib/game-seo.ts`의 소개·게임 방법·FAQ도 함께 수정한다
+- 새 페이지/게임 배포 후 `npm run indexnow` (네이버 서치어드바이저 + api.indexnow.org)
 
 ### 국기 퀴즈
 - 나라 추가/변경: `lib/flags.ts` 수정 후 `node scripts/copy-flags.mjs` 실행 → `public/flags/` 커밋
@@ -147,6 +161,18 @@ public/
 - 음성 대답은 미지원 브라우저에서 비활성화, 실패 시 보기(객관식)로 대체 (권한 거부·미지원이면 이후 문제도 보기 표시)
 - 음성 인식: 마이크를 다시 누르면 `finish()`(최종 결과로 채점), 취소는 `stop()`(결과 버림)
 - 국기 SVG는 SW precache에서 제외(`publicExcludes`)하고 전용 런타임 캐시(`flag-images`) 사용
+
+### 모바일 터치·화면 고정
+버튼을 누르다 화면이 끌려가지 않도록 게임 화면은 스크롤 없는 한 화면으로 유지한다.
+- `.game-screen`이 있는 페이지는 html/body 스크롤이 잠긴다 (`globals.css`의 `:has()` 규칙)
+- `.game-screen`은 `100dvh` 고정 + `touch-action: pan-y`(핀치 줌·더블탭 확대 차단), 내용이 넘칠 때만 내부 스크롤
+- `min-h-screen`/`100vh` 금지 — 모바일 주소창 높이만큼 화면보다 커져 살짝 스크롤된다
+- 상단 `pt-[4.25rem]`은 고정 버튼(홈·BGM), 하단 `pb-12`는 📖 게임 방법 버튼 자리
+- 낮은 화면(아이폰 SE/8, 세로 740px 이하)은 `short:` 변형으로 촘촘하게 (`tailwind.config.ts`의 `screens.short`)
+- 가로로 넓은 화면(패드 가로·데스크톱, 가로 방향 900px 이상)은 `wide:` 변형으로 2단 배치 (`screens.wide`, 예: 국기 퀴즈 국기 | 대답)
+- 드래그하는 요소(참여자 칩 등)와 오버레이는 `touch-none`, 꾹 누르는 버튼은 `touch-none select-none` + `onContextMenu` 방지
+- 게임 화면 위에 다른 고정 버튼을 추가할 때는 `top-4 left-4`(홈), `top-4 right-4`(BGM), `right-[4.25rem]`(알림) 자리를 피한다
+- 새 게임은 375×667·390×844·아이패드에서 참여자 4명 상태로 넘침이 없는지 확인한다
 
 ### 타이머
 - 타이머가 있는 게임은 반드시 `useRef` + `useEffect` cleanup으로 해제
