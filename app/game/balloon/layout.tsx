@@ -1,17 +1,15 @@
-import type { Metadata } from 'next'
+import { gameMetadata } from '@/lib/game-seo'
+import { GameGuide } from '@/components/GameGuide'
+import { GameTouchGuard } from '@/components/GameTouchGuard'
 
-export const metadata: Metadata = {
-  title: '풍선 팡 🎈 - 풍선을 터뜨리면 벌칙',
-  description:
-    '풍선을 꾹꾹 눌러 부풀려라! 터뜨리는 사람이 벌칙. 온가족 두근두근 무료 미니게임.',
-  alternates: { canonical: '/game/balloon' },
-  openGraph: {
-    title: '풍선 팡 🎈 | miniplay',
-    description: '풍선을 터뜨리면 벌칙! 두근두근 무료 미니게임.',
-    url: '/game/balloon',
-  },
-}
+export const metadata = gameMetadata('balloon')
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return children
+  return (
+    <>
+      {children}
+      <GameGuide id="balloon" />
+      <GameTouchGuard />
+    </>
+  )
 }

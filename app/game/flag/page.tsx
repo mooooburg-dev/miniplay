@@ -251,6 +251,14 @@ export default function FlagPage() {
   }, [goNextQuestion, level, mode])
 
   const isAnswered = phase === 'answered'
+  // 국기 너비: 한 화면에 맞도록 상태별로 하나만 지정 (같은 요소에 max-w가 겹치면 적용 순서가 불확실)
+  // 세로가 낮은 화면(short)은 더 작게, 음성 모드는 마이크·보기 자리만큼 더 줄인다
+  const flagWidth =
+    mode === 'voice' && showChoices
+      ? 'max-w-[min(300px,26dvh)] short:max-w-[150px]'
+      : mode === 'voice'
+        ? 'max-w-[300px] short:max-w-[190px]'
+        : 'max-w-[300px] short:max-w-[210px]'
   const isCorrect = isAnswered && picked?.code === question?.answer.code
 
   return (
@@ -363,8 +371,8 @@ export default function FlagPage() {
 
         {/* ── 문제 화면 ── */}
         {(phase === 'question' || phase === 'answered') && question && (
-          <div className="w-full max-w-sm sm:max-w-md md:max-w-lg flex flex-col items-center">
-            <div className="flex items-center gap-2 mb-3 text-sm sm:text-base font-jua text-gray-500">
+          <div className="w-full max-w-sm sm:max-w-md md:max-w-lg wide:max-w-4xl flex flex-col items-center">
+            <div className={`flex items-center gap-2 mb-3 short:mb-2 text-sm sm:text-base font-jua text-gray-500 ${hasPlayers ? 'short:hidden' : ''}`}>
               <span className="bg-white/70 rounded-full px-3 py-1">
                 {LEVEL_INFO[level].emoji} 레벨 {level}
               </span>
@@ -378,136 +386,164 @@ export default function FlagPage() {
               )}
             </div>
 
-            {/* 국기 */}
-            <div
-              className={`relative w-full max-w-[300px] sm:max-w-[360px] md:max-w-[420px] rounded-2xl bg-white p-2.5 sm:p-3 mb-3 ${
-                isAnswered ? (isCorrect ? 'animate-land-pop' : 'animate-screen-shake') : ''
-              }`}
-              style={{
-                boxShadow: isAnswered
-                  ? `0 0 0 4px ${isCorrect ? '#22c55e' : '#ef4444'}, 0 10px 30px rgba(0,0,0,0.12)`
-                  : `0 10px 30px ${SHADOW}80`,
-              }}
-            >
-              <Image
-                key={question.answer.code}
-                src={flagSrc(question.answer.code)}
-                alt="이 국기는 어느 나라일까요?"
-                width={640}
-                height={480}
-                unoptimized
-                priority
-                draggable={false}
-                className="w-full h-auto rounded-lg ring-1 ring-black/10"
-              />
-            </div>
-
-            {/* 결과 / 질문 문구 — 긴 나라 이름도 두 줄 안에 들어가도록 높이를 고정해 화면이 들썩이지 않게 한다 */}
-            <div className="h-[4.25rem] sm:h-[4.75rem] flex flex-col items-center justify-center mb-3 text-center font-jua">
-              {isAnswered ? (
-                <div style={{ color: isCorrect ? '#16a34a' : '#dc2626' }}>
-                  <p className="text-base sm:text-lg leading-tight">{isCorrect ? '딩동댕! ⭕' : '땡! ❌ 정답은'}</p>
-                  <p className="text-2xl sm:text-3xl leading-tight">{question.answer.name}</p>
-                </div>
-              ) : (
-                <p className="text-xl sm:text-2xl text-[#0ea5e9]">이 국기는 어느 나라일까요?</p>
-              )}
-            </div>
-
-            {/* 음성 대답 */}
-            {mode === 'voice' && (
-              <div className="flex flex-col items-center mb-4 w-full">
-                <button
-                  onClick={listening ? finishListening : startListening}
-                  disabled={isAnswered}
-                  aria-label={listening ? '다 말했어요' : '눌러서 말하기'}
-                  className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full text-5xl sm:text-6xl flex items-center justify-center text-white transition-transform active:scale-95 disabled:opacity-50"
+            {/* 가로로 넓은 화면(패드 가로 등)은 왼쪽 국기·오른쪽 대답 2단 배치로 한 화면에 맞춘다 */}
+            <div className="w-full flex flex-col items-center wide:flex-row wide:justify-center wide:gap-10">
+              <div className="w-full flex flex-col items-center wide:w-1/2">
+                {/* 국기 */}
+                <div
+                  className={`relative w-full ${flagWidth} sm:max-w-[360px] md:max-w-[420px] rounded-2xl bg-white p-2.5 sm:p-3 short:p-2 mb-3 short:mb-2 ${
+                    isAnswered ? (isCorrect ? 'animate-land-pop' : 'animate-screen-shake') : ''
+                  }`}
                   style={{
-                    background: listening
-                      ? 'linear-gradient(145deg, #ef4444, #f87171)'
-                      : `linear-gradient(145deg, ${COLOR}, #38bdf8)`,
-                    boxShadow: `0 6px 0 ${listening ? '#b91c1c' : DARK}`,
+                    boxShadow: isAnswered
+                      ? `0 0 0 4px ${isCorrect ? '#22c55e' : '#ef4444'}, 0 10px 30px rgba(0,0,0,0.12)`
+                      : `0 10px 30px ${SHADOW}80`,
                   }}
                 >
-                  {listening && (
-                    <span className="absolute inset-0 rounded-full bg-red-400/60 animate-ping" />
+                  <Image
+                    key={question.answer.code}
+                    src={flagSrc(question.answer.code)}
+                    alt="이 국기는 어느 나라일까요?"
+                    width={640}
+                    height={480}
+                    unoptimized
+                    priority
+                    draggable={false}
+                    className="w-full h-auto rounded-lg ring-1 ring-black/10"
+                  />
+                </div>
+
+                {/* 결과 / 질문 문구 — 긴 나라 이름도 두 줄 안에 들어가도록 높이를 고정해 화면이 들썩이지 않게 한다 */}
+                <div className="h-[4.25rem] sm:h-[4.75rem] short:h-14 flex flex-col items-center justify-center mb-3 short:mb-2 text-center font-jua">
+                  {isAnswered ? (
+                    <div style={{ color: isCorrect ? '#16a34a' : '#dc2626' }}>
+                      <p className="text-base sm:text-lg leading-tight">{isCorrect ? '딩동댕! ⭕' : '땡! ❌ 정답은'}</p>
+                      <p className="text-2xl sm:text-3xl leading-tight">{question.answer.name}</p>
+                    </div>
+                  ) : (
+                    <p className="text-xl sm:text-2xl text-[#0ea5e9]">이 국기는 어느 나라일까요?</p>
                   )}
-                  <span className="relative">🎤</span>
-                </button>
-                <p className="mt-3 min-h-[1.5rem] text-sm sm:text-base font-jua text-gray-500 text-center px-2">
-                  {listening
-                    ? interim
-                      ? `"${interim}"`
-                      : '듣고 있어요... 다 말하면 마이크를 한 번 더 눌러요'
-                    : heard
-                      ? `"${heard}"(이)라고 들었어요`
-                      : isAnswered
-                        ? ''
-                        : '마이크를 누르고 나라 이름을 말해요'}
-                </p>
-                {voiceMsg && (
-                  <p className={`text-sm sm:text-base font-jua text-[#ef4444] text-center mt-1 ${isAnswered ? 'invisible' : ''}`}>
-                    {voiceMsg}
-                  </p>
-                )}
-                {!showChoices && (
-                  <button
-                    onClick={() => {
-                      stopListening()
-                      setShowChoices(true)
-                    }}
-                    disabled={isAnswered}
-                    className={`mt-2 text-sm sm:text-base font-jua text-gray-400 underline underline-offset-4 ${isAnswered ? 'invisible' : ''}`}
+                </div>
+
+              </div>
+
+              <div className="w-full flex flex-col items-center wide:w-1/2 wide:max-w-md">
+                {/* 음성 대답 — 보기가 함께 열리면 한 화면에 들어가도록 작은 마이크 + 안내 한 줄로 접는다 */}
+                {mode === 'voice' && (
+                  <div
+                    className={
+                      showChoices
+                        ? 'flex items-center justify-center gap-3 mb-3 short:mb-2 w-full px-1'
+                        : 'flex flex-col items-center mb-4 short:mb-2 w-full'
+                    }
                   >
-                    보기에서 고를래요
-                  </button>
-                )}
-              </div>
-            )}
-
-            {/* 보기 */}
-            {showChoices && (
-              <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full">
-                {question.choices.map((choice) => {
-                  const isAnswer = choice.code === question.answer.code
-                  const isPicked = choice.code === picked?.code
-                  let style: React.CSSProperties = {
-                    background: 'rgba(255,255,255,0.85)',
-                    color: '#475569',
-                    boxShadow: `0 4px 0 ${SHADOW}`,
-                  }
-                  if (isAnswered && isAnswer) {
-                    style = { background: '#22c55e', color: 'white', boxShadow: '0 4px 0 #15803d' }
-                  } else if (isAnswered && isPicked) {
-                    style = { background: '#ef4444', color: 'white', boxShadow: '0 4px 0 #b91c1c' }
-                  } else if (isAnswered) {
-                    style = { ...style, opacity: 0.45 }
-                  }
-                  return (
                     <button
-                      key={choice.code}
-                      onClick={() => submit(choice)}
+                      onClick={listening ? finishListening : startListening}
                       disabled={isAnswered}
-                      className={`min-h-[3.75rem] sm:min-h-[4.25rem] rounded-2xl px-2 py-3 font-jua break-keep [overflow-wrap:anywhere] leading-tight transition-all active:translate-y-1 disabled:active:translate-y-0 ${
-                        choice.name.length >= 7 ? 'text-base sm:text-lg md:text-xl' : 'text-lg sm:text-xl md:text-2xl'
+                      aria-label={listening ? '다 말했어요' : '눌러서 말하기'}
+                      className={`relative shrink-0 rounded-full flex items-center justify-center text-white transition-transform active:scale-95 disabled:opacity-50 ${
+                        showChoices
+                          ? 'w-12 h-12 text-2xl'
+                          : 'w-20 h-20 sm:w-24 sm:h-24 short:w-16 short:h-16 text-4xl sm:text-5xl'
                       }`}
-                      style={style}
+                      style={{
+                        background: listening
+                          ? 'linear-gradient(145deg, #ef4444, #f87171)'
+                          : `linear-gradient(145deg, ${COLOR}, #38bdf8)`,
+                        boxShadow: `0 ${showChoices ? 4 : 6}px 0 ${listening ? '#b91c1c' : DARK}`,
+                      }}
                     >
-                      {choice.name}
+                      {listening && (
+                        <span className="absolute inset-0 rounded-full bg-red-400/60 animate-ping" />
+                      )}
+                      <span className="relative">🎤</span>
                     </button>
-                  )
-                })}
-              </div>
-            )}
+                    <div className={showChoices ? 'min-w-0 text-left' : 'flex flex-col items-center'}>
+                      <p
+                        className={`min-h-[1.5rem] text-sm sm:text-base font-jua text-gray-500 ${
+                          showChoices ? '' : 'mt-3 short:mt-1.5 text-center px-2'
+                        }`}
+                      >
+                        {listening
+                          ? interim
+                            ? `"${interim}"`
+                            : '듣고 있어요... 다 말하면 마이크를 한 번 더 눌러요'
+                          : heard
+                            ? `"${heard}"(이)라고 들었어요`
+                            : isAnswered
+                              ? ''
+                              : showChoices
+                                ? '말하거나 아래에서 골라요'
+                                : '마이크를 누르고 나라 이름을 말해요'}
+                      </p>
+                      {voiceMsg && (
+                        <p
+                          className={`text-sm sm:text-base font-jua text-[#ef4444] mt-1 ${showChoices ? '' : 'text-center'} ${isAnswered ? 'invisible' : ''}`}
+                        >
+                          {voiceMsg}
+                        </p>
+                      )}
+                      {!showChoices && (
+                        <button
+                          onClick={() => {
+                            stopListening()
+                            setShowChoices(true)
+                          }}
+                          disabled={isAnswered}
+                          className={`mt-2 text-sm sm:text-base font-jua text-gray-400 underline underline-offset-4 ${isAnswered ? 'invisible' : ''}`}
+                        >
+                          보기에서 고를래요
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
 
-            {/* 답 확인 중에는 숨기되 자리는 유지해 화면이 들썩이지 않게 한다 */}
-            <button
-              onClick={backToSetup}
-              disabled={isAnswered}
-              className={`mt-5 text-sm sm:text-base font-jua text-gray-400 underline underline-offset-4 ${isAnswered ? 'invisible' : ''}`}
-            >
-              ⚙️ 레벨 바꾸기
-            </button>
+                {/* 보기 */}
+                {showChoices && (
+                  <div className="grid grid-cols-2 gap-2.5 sm:gap-3 w-full">
+                    {question.choices.map((choice) => {
+                      const isAnswer = choice.code === question.answer.code
+                      const isPicked = choice.code === picked?.code
+                      let style: React.CSSProperties = {
+                        background: 'rgba(255,255,255,0.85)',
+                        color: '#475569',
+                        boxShadow: `0 4px 0 ${SHADOW}`,
+                      }
+                      if (isAnswered && isAnswer) {
+                        style = { background: '#22c55e', color: 'white', boxShadow: '0 4px 0 #15803d' }
+                      } else if (isAnswered && isPicked) {
+                        style = { background: '#ef4444', color: 'white', boxShadow: '0 4px 0 #b91c1c' }
+                      } else if (isAnswered) {
+                        style = { ...style, opacity: 0.45 }
+                      }
+                      return (
+                        <button
+                          key={choice.code}
+                          onClick={() => submit(choice)}
+                          disabled={isAnswered}
+                          className={`min-h-[3.75rem] sm:min-h-[4.25rem] short:min-h-[3.25rem] rounded-2xl px-2 py-3 short:py-2 font-jua break-keep [overflow-wrap:anywhere] leading-tight transition-all active:translate-y-1 disabled:active:translate-y-0 ${
+                            choice.name.length >= 7 ? 'text-base sm:text-lg md:text-xl' : 'text-lg sm:text-xl md:text-2xl'
+                          }`}
+                          style={style}
+                        >
+                          {choice.name}
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+
+                {/* 답 확인 중에는 숨기되 자리는 유지해 화면이 들썩이지 않게 한다 */}
+                <button
+                  onClick={backToSetup}
+                  disabled={isAnswered}
+                  className={`mt-5 short:mt-2 text-sm sm:text-base font-jua text-gray-400 underline underline-offset-4 ${isAnswered ? 'invisible' : ''}`}
+                >
+                  ⚙️ 레벨 바꾸기
+                </button>
+              </div>
+            </div>
           </div>
         )}
 

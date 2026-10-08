@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,
     priority: 0.8,
+    images: [`${baseUrl}/og/${game.id}`],
   }))
 
   return [
@@ -17,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 1,
+      images: [`${baseUrl}/og-image.png`],
     },
     ...gamePages,
   ]

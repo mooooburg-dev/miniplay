@@ -91,30 +91,46 @@ export default function NewGamePage() {
 }
 ```
 
-### 3단계: SEO metadata
+### 3단계: SEO 데이터와 layout
+
+`lib/game-seo.ts`의 `GAME_SEO`에 항목을 추가합니다. 소개·게임 방법·FAQ는 페이지 하단에 실제로 노출되고 JSON-LD에도 들어가므로 **실제 게임 규칙과 정확히 일치**해야 합니다.
+
+```typescript
+newgame: {
+  title: '새 게임 🎯 - 한 줄 설명',
+  description: '검색 결과·공유 미리보기에 노출될 설명',
+  keywords: ['검색 키워드', ...],
+  intro: '게임 소개 한 문단',
+  howTo: ['1단계', '2단계', '3단계'],
+  faq: [{ q: '질문', a: '답변' }],
+},
+```
 
 `app/game/newgame/layout.tsx`를 생성합니다. (page.tsx가 `'use client'`라 metadata는 layout에서 export)
 
 ```typescript
-import type { Metadata } from 'next'
+import { gameMetadata } from '@/lib/game-seo'
+import { GameGuide } from '@/components/GameGuide'
 
-export const metadata: Metadata = {
-  title: '새 게임 🎯 - 한 줄 설명',
-  description: '검색 결과에 노출될 설명',
-  alternates: { canonical: '/game/newgame' },
-  openGraph: { title: '새 게임 🎯 | miniplay', description: '공유 시 설명', url: '/game/newgame' },
-}
+export const metadata = gameMetadata('newgame')
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return children
+  return (
+    <>
+      {children}
+      <GameGuide id="newgame" />
+    </>
+  )
 }
 ```
 
+> ⚠️ layout에서 `openGraph`를 직접 작성하지 마세요. Next.js는 자식의 `openGraph`로 루트 값을 통째로 덮어써서 og:image가 사라집니다. `gameMetadata()`가 게임별 OG 이미지(`/og/<id>`)까지 넣어 줍니다.
+
 `public/llms.txt` 게임 목록과 `app/layout.tsx`의 description/keywords에도 추가합니다.
 
-### 4단계: 완료
+### 4단계: 완료 및 색인 요청
 
-홈 화면 카드, 라우팅, sitemap이 자동으로 반영됩니다.
+홈 화면 카드, 라우팅, sitemap, OG 이미지가 자동으로 반영됩니다. 배포가 끝나면 `npm run indexnow`로 네이버·Bing 등에 색인을 요청합니다.
 
 ## 게임 페이지 필수 패턴
 
@@ -173,8 +189,10 @@ useEffect(() => {
 
 - [ ] `types/index.ts`에 `GameType`과 `GAMES` 추가
 - [ ] `app/game/<id>/page.tsx` 생성 (`'use client'`)
-- [ ] `app/game/<id>/layout.tsx` 생성 (SEO metadata)
+- [ ] `lib/game-seo.ts`에 SEO 데이터 추가 (실제 규칙과 일치)
+- [ ] `app/game/<id>/layout.tsx` 생성 (`gameMetadata` + `GameGuide`)
 - [ ] `public/llms.txt`, 루트 description/keywords 갱신
+- [ ] 배포 후 `npm run indexnow`
 - [ ] `className="game-screen"` 래퍼 사용
 - [ ] 타이머 사용 시 `useRef` + `useEffect` cleanup
 - [ ] 참여자 없이도 플레이 가능하도록 구현

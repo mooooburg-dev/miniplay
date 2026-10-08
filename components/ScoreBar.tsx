@@ -111,7 +111,7 @@ export function ScoreBar({
             onDrop={() => handleDrop(i)}
             onDragEnd={handleDragEnd}
             onTouchStart={(e) => handleTouchStart(i, e)}
-            className="px-3.5 py-1 sm:px-5 sm:py-1.5 rounded-full text-xs sm:text-sm md:text-base font-jua transition-all duration-200 cursor-grab active:cursor-grabbing select-none"
+            className="px-3.5 py-1 sm:px-5 sm:py-1.5 rounded-full text-xs sm:text-sm md:text-base font-jua transition-all duration-200 cursor-grab active:cursor-grabbing select-none touch-none"
             style={{
               ...(isActive
                 ? { background: activeColor, color: 'white', transform: 'scale(1.08)' }

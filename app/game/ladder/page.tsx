@@ -264,7 +264,7 @@ export default function LadderPage() {
   const isEditing = phase === 'edit'
 
   return (
-    <div className="game-screen !min-h-0 h-[100dvh] !py-2 sm:!py-3 overflow-hidden">
+    <div className="game-screen !pt-2 sm:!pt-3 !pb-12 overflow-hidden before:hidden after:hidden">
       <button
         onClick={() => router.push('/')}
         className="fixed top-4 left-4 z-50 bg-white/70 backdrop-blur-md border border-white/80 rounded-full px-4 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-base text-gray-400 font-jua shadow-[0_4px_16px_rgba(0,0,0,0.08)] active:scale-90 transition-all hover:bg-white/90"
@@ -272,8 +272,9 @@ export default function LadderPage() {
         &larr; 홈으로
       </button>
 
-      <h1 className="text-2xl sm:text-3xl md:text-4xl font-jua text-[#f59e0b] mb-1 sm:mb-2">
-        🪜 사다리 게임
+      {/* 제목이 상단 버튼 줄에 들어가므로 아주 좁은 화면(320px)에서는 줄여 홈·알림 버튼과 겹치지 않게 한다 */}
+      <h1 className="text-2xl max-[359px]:text-lg sm:text-3xl md:text-4xl font-jua text-[#f59e0b] mb-1 sm:mb-2">
+        <span className="max-[359px]:hidden">🪜 </span>사다리 게임
       </h1>
 
       {/* 인원 수 조절 (편집 모드에서만) */}
