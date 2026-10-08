@@ -58,7 +58,7 @@ export function PenaltyOverlay({ isOpen, loserName, onRetry }: PenaltyOverlayPro
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center touch-none"
       style={{ background: 'linear-gradient(160deg, #ff6b9d, #ff4081)' }}
     >
       {/* 파티클 */}

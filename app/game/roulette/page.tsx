@@ -182,21 +182,21 @@ export default function RoulettePage() {
           ← 홈으로
         </button>
 
-        {/* 모드 변경 버튼 */}
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-jua text-[#ff6b9d] mb-2">
+          🎡 숫자 룰렛
+        </h1>
+
+        {/* 모드 변경 버튼 (예전엔 우상단 고정이라 BGM 버튼과 겹쳤음) */}
         <button
           onClick={() => {
             if (timeoutRef.current) clearTimeout(timeoutRef.current)
             setMode(null)
             reset()
           }}
-          className="fixed top-4 right-4 z-50 bg-white/70 backdrop-blur-md border border-white/80 rounded-full px-4 py-2 sm:px-5 sm:py-2.5 text-sm sm:text-base text-gray-400 font-jua shadow-[0_4px_16px_rgba(0,0,0,0.08)] active:scale-90 transition-all hover:bg-white/90"
+          className="mb-3 bg-white/70 backdrop-blur-md border border-white/80 rounded-full px-4 py-1.5 sm:px-5 sm:py-2 text-sm sm:text-base text-gray-400 font-jua shadow-[0_4px_16px_rgba(0,0,0,0.08)] active:scale-90 transition-all hover:bg-white/90"
         >
           🔄 모드 변경
         </button>
-
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-jua text-[#ff6b9d] mb-2">
-          🎡 숫자 룰렛
-        </h1>
 
         {players.length > 0 && (
           <>

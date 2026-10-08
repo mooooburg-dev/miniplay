@@ -23,6 +23,11 @@ input, textarea, select {
   -webkit-touch-callout: default;
 }
 
+/* 스크롤 주체(html)에도 지정해야 iOS 바운스·당겨서 새로고침이 막힌다 */
+html {
+  overscroll-behavior: none;
+}
+
 body {
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
@@ -40,11 +45,36 @@ body {
   @apply bg-white/60 backdrop-blur-md border border-white/60 shadow-[0_8px_32px_rgba(255,182,193,0.15)] rounded-3xl;
 }
 
-/* 게임 공통 레이아웃 */
+/*
+ * 게임 공통 레이아웃 — 모바일에서 버튼을 누를 때 화면이 끌려가지 않도록 한 화면에 고정한다.
+ * - 게임 페이지는 문서 스크롤을 막고(html/body), 화면은 정확히 보이는 높이(100dvh)로 고정
+ *   (100vh는 모바일 주소창을 포함한 높이라 실제 화면보다 커서 살짝 스크롤되던 원인)
+ * - 작은 기기에서 내용이 넘칠 때만 화면 안에서 세로 스크롤, 바깥으로 번지지 않게 contain
+ * - pan-y: 세로 스크롤만 허용 → 핀치 줌·더블탭 확대·가로 끌림 차단
+ * - 상단은 고정 버튼(홈·BGM), 하단은 게임 방법 버튼 자리를 비워 둔다
+ */
+html:has(.game-screen),
+body:has(.game-screen) {
+  height: 100%;
+  overflow: hidden;
+}
+
 .game-screen {
-  @apply min-h-screen flex flex-col items-center justify-center px-4 py-4;
-  @apply sm:px-8 sm:py-6 md:px-12 lg:px-16;
-  touch-action: manipulation;
+  @apply flex flex-col items-center px-4 pt-[4.25rem] pb-12;
+  @apply sm:px-8 md:px-12 lg:px-16;
+  height: 100vh;
+  height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+
+/* 내용이 짧으면 세로 가운데, 넘치면 위부터 보이게 (justify-center는 넘칠 때 위쪽이 잘려 닿을 수 없다) */
+.game-screen::before,
+.game-screen::after {
+  content: '';
+  flex: 1 0 0;
 }
 
 /* 게임 버튼/인터랙션 공통 터치 최적화 */

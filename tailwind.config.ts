@@ -8,6 +8,12 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        // 세로가 낮은 화면(아이폰 SE/8 등): 게임 화면을 한 화면에 맞추기 위한 촘촘한 배치
+        short: { raw: '(max-height: 740px)' },
+        // 가로로 넓은 화면(패드 가로·데스크톱): 세로로 쌓으면 넘치는 화면을 2단 배치로
+        wide: { raw: '(orientation: landscape) and (min-width: 900px)' },
+      },
       fontFamily: {
         jua: ['var(--font-jua)', 'sans-serif'],
       },
