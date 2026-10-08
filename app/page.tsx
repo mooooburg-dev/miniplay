@@ -4,7 +4,7 @@ import { FeedbackButton } from '@/components/FeedbackButton'
 import { KakaoShareButton } from '@/components/KakaoShareButton'
 import { InstallPrompt } from '@/components/InstallPrompt'
 import { HomeAbout, HOME_FAQ } from '@/components/HomeAbout'
-import { FamilySiteBanner } from '@/components/FamilySiteBanner'
+import { FamilySiteBanner, FamilySiteLinks } from '@/components/FamilySiteBanner'
 import { GAMES } from '@/types'
 
 const jsonLd = {
@@ -84,8 +84,9 @@ export default function HomePage() {
       </div>
       {/* 사이트 소개·추천·FAQ (SEO 본문) */}
       <HomeAbout />
-      {/* 패밀리 사이트: 골드박스 투데이 */}
+      {/* 패밀리 사이트: 골드박스 투데이 배너 + 나머지 사이트 목록 */}
       <FamilySiteBanner />
+      <FamilySiteLinks />
       {/* 공유하기 플로팅 버튼 */}
       <KakaoShareButton variant="home" />
       {/* 의견함 플로팅 버튼 */}

@@ -29,3 +29,47 @@ export function FamilySiteBanner() {
     </a>
   )
 }
+
+// 패밀리 사이트 목록 — 같은 운영자의 사이트를 이름으로 잇는다 (각 사이트 푸터에도 미니플레이가 있어 상호 링크)
+const FAMILY_SITES = [
+  { id: 'rankingbox', name: '랭킹박스', desc: '쇼핑 랭킹·가격 판정', url: 'https://rankingbox.kr' },
+  { id: 'ratebox', name: '금리박스', desc: '예·적금·대출 금리 추이', url: 'https://ratebox.drawyourmind.com' },
+  { id: 'paybox', name: '월급박스', desc: '연봉·월급 실수령액', url: 'https://paybox.drawyourmind.com' },
+  { id: 'bunyangbox', name: '분양박스', desc: '아파트 분양·청약 경쟁률', url: 'https://bunyangbox.drawyourmind.com' },
+  { id: 'pricegap', name: '프라이스갭', desc: '해외직구 가격 기록', url: 'https://pricegap.kr' },
+  { id: 'drawyourmind', name: 'drawyourmind', desc: '만든 사람', url: 'https://drawyourmind.com' },
+] as const
+
+function familyUrl(url: string) {
+  const u = new URL(url)
+  u.searchParams.set('utm_source', 'miniplay')
+  u.searchParams.set('utm_medium', 'referral')
+  u.searchParams.set('utm_campaign', 'family_site')
+  return u.toString()
+}
+
+export function FamilySiteLinks() {
+  return (
+    <nav
+      aria-label="패밀리 사이트"
+      className="w-full max-w-sm sm:max-w-lg md:max-w-xl lg:max-w-2xl mt-4 px-2"
+    >
+      <ul className="flex flex-wrap justify-center gap-x-4 gap-y-1.5 text-xs text-gray-400">
+        {FAMILY_SITES.map((s) => (
+          <li key={s.id}>
+            <a
+              href={familyUrl(s.url)}
+              target="_blank"
+              rel="noopener"
+              title={s.desc}
+              onClick={() => trackEvent('family_site_click', { site: s.id })}
+              className="hover:text-[#ff6b9d] transition-colors"
+            >
+              {s.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
