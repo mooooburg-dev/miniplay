@@ -5,7 +5,8 @@ export type GameType =
   | 'balloon'
   | 'mole'
   | 'spin'
-  | 'ladder';
+  | 'ladder'
+  | 'flag';
 
 export interface GameMeta {
   id: GameType;
@@ -19,6 +20,16 @@ export interface GameMeta {
 }
 
 export const GAMES: GameMeta[] = [
+  {
+    id: 'flag',
+    emoji: '🌍',
+    name: '국기 퀴즈',
+    desc: '이 국기는 어느 나라?',
+    color: '#0ea5e9',
+    shadow: '#7dd3fc',
+    path: '/game/flag',
+    isNew: true,
+  },
   {
     id: 'ladder',
     emoji: '🪜',

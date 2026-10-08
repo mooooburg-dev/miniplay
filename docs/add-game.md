@@ -8,7 +8,7 @@
 
 ```typescript
 // GameType 유니온에 추가
-export type GameType = 'roulette' | 'croc' | 'bomb' | 'balloon' | 'mole' | 'spin' | 'ladder' | 'newgame';
+export type GameType = 'roulette' | 'croc' | 'bomb' | 'balloon' | 'mole' | 'spin' | 'ladder' | 'flag' | 'newgame';
 
 // GAMES 배열에 추가
 export const GAMES: GameMeta[] = [
@@ -33,13 +33,13 @@ export const GAMES: GameMeta[] = [
 ```typescript
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGameStore } from '@/store/gameStore';
 import { useAudio } from '@/hooks/useAudio';
-import TurnBadge from '@/components/TurnBadge';
-import ScoreBar from '@/components/ScoreBar';
-import PenaltyOverlay from '@/components/PenaltyOverlay';
+import { TurnBadge } from '@/components/TurnBadge';
+import { ScoreBar } from '@/components/ScoreBar';
+import { PenaltyOverlay } from '@/components/PenaltyOverlay';
 import { GAMES } from '@/types';
 import { trackEvent } from '@/lib/gtag';
 
@@ -51,6 +51,10 @@ export default function NewGamePage() {
 
   // 참여자 유무에 따른 분기
   const hasPlayers = players.length > 0;
+
+  // 벌칙 대상 (빈 문자열이면 오버레이 닫힘)
+  const [penaltyPlayer, setPenaltyPlayer] = useState('');
+  const reset = () => setPenaltyPlayer('');
 
   // 타이머 사용 시 반드시 ref + cleanup
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -76,18 +80,41 @@ export default function NewGamePage() {
       {/* ... */}
 
       {/* 스코어바 (참여자 있을 때만) */}
-      {hasPlayers && <ScoreBar />}
+      {hasPlayers && (
+        <ScoreBar players={players} scores={scores} currentTurn={turn} activeColor={meta.color} />
+      )}
 
       {/* 벌칙 오버레이 */}
-      <PenaltyOverlay />
+      <PenaltyOverlay isOpen={!!penaltyPlayer} loserName={penaltyPlayer} onRetry={reset} />
     </div>
   );
 }
 ```
 
-### 3단계: 완료
+### 3단계: SEO metadata
 
-홈 화면에 게임 카드가 자동으로 노출되고 라우팅이 완료됩니다.
+`app/game/newgame/layout.tsx`를 생성합니다. (page.tsx가 `'use client'`라 metadata는 layout에서 export)
+
+```typescript
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: '새 게임 🎯 - 한 줄 설명',
+  description: '검색 결과에 노출될 설명',
+  alternates: { canonical: '/game/newgame' },
+  openGraph: { title: '새 게임 🎯 | miniplay', description: '공유 시 설명', url: '/game/newgame' },
+}
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return children
+}
+```
+
+`public/llms.txt` 게임 목록과 `app/layout.tsx`의 description/keywords에도 추가합니다.
+
+### 4단계: 완료
+
+홈 화면 카드, 라우팅, sitemap이 자동으로 반영됩니다.
 
 ## 게임 페이지 필수 패턴
 
@@ -146,6 +173,8 @@ useEffect(() => {
 
 - [ ] `types/index.ts`에 `GameType`과 `GAMES` 추가
 - [ ] `app/game/<id>/page.tsx` 생성 (`'use client'`)
+- [ ] `app/game/<id>/layout.tsx` 생성 (SEO metadata)
+- [ ] `public/llms.txt`, 루트 description/keywords 갱신
 - [ ] `className="game-screen"` 래퍼 사용
 - [ ] 타이머 사용 시 `useRef` + `useEffect` cleanup
 - [ ] 참여자 없이도 플레이 가능하도록 구현

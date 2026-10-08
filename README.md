@@ -12,6 +12,7 @@
 
 | 게임 | 경로 | 설명 |
 | --- | --- | --- |
+| 🌍 국기 퀴즈 | `/game/flag` | 레벨 1~3 국기 맞히기, 보기 터치 또는 말로 대답 (**NEW**) |
 | 🪜 사다리 게임 | `/game/ladder` | 사다리를 만들고 운명을 결정! (**NEW**) |
 | 🎡 숫자 룰렛 | `/game/roulette` | 금지 숫자 / 미션 모드, 돌아가는 룰렛 |
 | 👉 화살표 스핀 | `/game/spin` | 화살표가 가리키면 당첨! |
@@ -34,7 +35,10 @@
 - **Audio**: Web Audio API (외부 파일 없이 코드로 합성)
 - **PWA**: @ducanh2912/next-pwa + 커스텀 Service Worker
 - **Push**: web-push + Redis (구독 저장)
-- **Analytics**: Google Analytics 4
+- **Analytics**: Google Analytics 4, Vercel Analytics / Speed Insights
+- **Share**: 카카오톡 공유 (Kakao JS SDK)
+- **Speech**: Web Speech API (국기 퀴즈 음성 대답)
+- **Flags**: [flag-icons](https://github.com/lipis/flag-icons) (MIT) SVG 자체 호스팅
 - **Deploy**: Vercel
 
 ---
@@ -78,13 +82,14 @@ miniplay/
 │       ├── mole/           # 쏙쏙 햄찌
 │       ├── bomb/           # 째깍 폭탄
 │       ├── balloon/        # 풍선 팡
-│       └── ladder/         # 사다리 게임
+│       ├── ladder/         # 사다리 게임
+│       └── flag/           # 국기 퀴즈
 ├── components/             # 공용 UI 컴포넌트
 ├── store/                  # Zustand 전역 상태 (gameStore)
-├── hooks/                  # useAudio, useBgm
-├── lib/                    # GA, 푸시 클라이언트/서버 유틸
+├── hooks/                  # useAudio, useBgm, useSpeechRecognition
+├── lib/                    # GA, 카카오, 국기 데이터, 푸시 클라이언트/서버 유틸
 ├── worker/                 # Service Worker (푸시 알림)
-├── scripts/                # PWA 아이콘 생성 스크립트
+├── scripts/                # PWA 아이콘 생성, 국기 SVG 복사 스크립트
 ├── types/                  # 타입 정의 + GAMES 메타 배열
 └── docs/                   # 프로젝트 문서
 ```
