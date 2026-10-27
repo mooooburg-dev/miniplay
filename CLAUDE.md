@@ -81,6 +81,7 @@ components/
 ├── PlayerSetup.tsx         # 참여자 관리 (최대 6명)
 ├── PwaTracker.tsx          # PWA 설치/실행 GA 이벤트
 ├── ScoreBar.tsx            # 참여자 칩 + 드래그 정렬
+├── ShopPicks.tsx           # 게임 방법 시트 FAQ 아래 "함께 하면 더 재밌는 놀이템" (Server) + ShopPickCard(client, 클릭 추적·이미지 폴백)
 └── TurnBadge.tsx           # 현재 턴 배지
 
 hooks/
@@ -173,6 +174,12 @@ public/
 - 드래그하는 요소(참여자 칩 등)와 오버레이는 `touch-none`, 꾹 누르는 버튼은 `touch-none select-none` + `onContextMenu` 방지
 - 게임 화면 위에 다른 고정 버튼을 추가할 때는 `top-4 left-4`(홈), `top-4 right-4`(BGM), `right-[4.25rem]`(알림) 자리를 피한다
 - 새 게임은 375×667·390×844·아이패드에서 참여자 4명 상태로 넘침이 없는지 확인한다
+
+### 놀이템 상품 카드
+- 상품 추가: goldbox /admin/pool에 등록 → 발급된 id를 `lib/shop-picks.ts`의 `SHOP_PICKS[게임]`에 기입 (게임당 최대 2개, 비면 섹션 미노출)
+- 링크는 `goldbox.today/go/{id}`만 쓴다 (제휴사 직링크·API·SDK 추가 금지), `rel="sponsored nofollow noopener"`
+- 대가성 고지 문구 상시 노출, 가격·할인·"최저가"·효능 문구 금지, 이름·클래스·이벤트명에 제휴사 상호 금지
+- 게임 화면·벌칙 오버레이·자동 모달에는 넣지 않고, JSON-LD·sitemap·llms.txt에도 넣지 않는다
 
 ### 타이머
 - 타이머가 있는 게임은 반드시 `useRef` + `useEffect` cleanup으로 해제

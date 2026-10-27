@@ -1,6 +1,7 @@
 import { GAMES, type GameType } from '@/types'
 import { GAME_SEO, gameJsonLd } from '@/lib/game-seo'
 import { GuideSheet } from '@/components/GuideSheet'
+import { ShopPicks } from '@/components/ShopPicks'
 
 // 게임 "하는 방법"·FAQ (Server Component) — 게임 화면 하단 📖 버튼으로 여는 바텀시트에 담긴다.
 // 본문과 구조화 데이터(JSON-LD)는 서버에서 렌더링되어 시트가 닫혀 있어도 HTML에 포함된다.
@@ -35,6 +36,8 @@ export function GameGuide({ id }: { id: GameType }) {
               </div>
             ))}
           </dl>
+
+          <ShopPicks id={id} />
         </section>
       </GuideSheet>
     </>
