@@ -3,6 +3,8 @@
 온가족 함께하는 두근두근 벌칙 미니게임 모음 사이트.
 부모님이 아이들과 쉽게 접속해서 바로 플레이할 수 있는 것을 최우선으로 한다.
 
+> 회사 단위 결정(시간 배분·트랙 분리·정책)은 `~/Repositories/drawyourmind-hq` 를 본다. 이 저장소에는 이 프로젝트 결정만 둔다.
+
 🌐 **Production**: https://miniplay.kr
 📦 **Repo**: https://github.com/mooburg/miniplay
 
